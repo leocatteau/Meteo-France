@@ -42,8 +42,10 @@ class bdclim_clean_mask(Dataset):
         data_X[mask] = np.NaN
         data_y = X.copy()
 
-        self.data_X = data_X[border1:border2]
-        self.data_y = data_y[border1:border2]
+        # self.data_X = data_X[border1:border2]
+        # self.data_y = data_y[border1:border2]
+        self.data_X = torch.tensor(data_X[border1:border2]).float()
+        self.data_y = torch.tensor(data_y[border1:border2]).float()
         #self.mask = mask[border1:border2] should we pass the mask? why don't they in sequence setting ?
 
     def __getitem__(self, index):
@@ -106,8 +108,8 @@ class bdclim_clean_sequence_mask(Dataset):
 
         # self.data_X = data_X[border1:border2]
         # self.data_y = data_y[border1:border2]
-        self.data_X = torch.tensor(data_X[border1:border2])
-        self.data_y = torch.tensor(data_y[border1:border2])
+        self.data_X = torch.tensor(data_X[border1:border2]).float()
+        self.data_y = torch.tensor(data_y[border1:border2]).float()
         #self.mask = mask[border1:border2] should we pass the mask? why don't they in sequence setting ?
 
     def __getitem__(self, index):

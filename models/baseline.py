@@ -3,11 +3,9 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 import torch
 import torch.nn as nn
-import fancyimpute
 from sklearn.metrics import mean_squared_error
-from tqdm import tqdm
 
-from utils.functions import torch_nanmean
+from utils.functions import torch_nanmean, torch_nan_to_num
 
 class mean_fill(nn.Module):
     def __init__(self, columnwise=False):
@@ -15,14 +13,10 @@ class mean_fill(nn.Module):
         self.columnwise = columnwise
 
     def forward(self, x):
-        print(f'x in mean model: {x}')
         mask = torch.isnan(x)
         if self.columnwise: 
-            x_pred = torch_nanmean(x,dim=1)*mask + torch.nan_to_num(x)
-        else: x_pred = torch_nanmean(x)*mask + torch.nan_to_num(x)
-
-        print(f'x_pred dans mean model: {x_pred}')
-
+            x_pred = torch_nanmean(x,dim=1)[:,None]*mask + torch_nan_to_num(x)
+        else: x_pred = torch_nanmean(x)*mask + torch_nan_to_num(x)
         return x_pred
     
 class svd():
@@ -43,8 +37,8 @@ class svd():
 
         if verbose:
             print('optimal rank:', optimal_rank)
-            model = mean_fill(columnwise=True)
-            x_mean = model.predict(x)
+            mean_model = mean_fill(columnwise=True)
+            x_mean = mean_model(x)
             MSE_mean = mean_squared_error(y, x_mean)
 
             plt.figure(figsize=(8, 4))
@@ -57,34 +51,35 @@ class svd():
             plt.show()
 
     def predict(self, x):
-        mask = np.isnan(x)
+        mask = torch.isnan(x)
 
         mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model.predict(x)
+        x_mean = mean_model(x)
 
         U, S, V = np.linalg.svd(x_mean, full_matrices=False)
         U, S, V = U[:,:self.rank], np.diag(S[:self.rank]), V[:self.rank,:]
-        x_pred = U @ S @ V
-        x_pred = x_pred*(mask) + np.nan_to_num(x)
+        x_pred = torch.tensor(U @ S @ V).float()
+        x_pred = x_pred*(mask) + torch_nan_to_num(x)
 
         return x_pred
     
 class linear():
+    # one could implement the pytorch overlay (nn.Module) of sklearn linear model
     def __init__(self):
         self.model = LinearRegression()
 
     def train(self, x, y):
         mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model.predict(x)
+        x_mean = mean_model(x)
         self.model.fit(x_mean, y)
 
     def predict(self, x):
-        mask = np.isnan(x)
+        mask = torch.isnan(x)
 
         mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model.predict(x)
+        x_mean = mean_model(x)
 
-        y_pred = self.model.predict(x_mean)
+        y_pred = torch.tensor(self.model.predict(x_mean)).float()
         y_pred = y_pred*(mask) + np.nan_to_num(x)
         return y_pred
     
@@ -94,11 +89,11 @@ class linear_MLP(nn.Module):
         self.model = nn.Sequential(nn.Linear(seq_dim, seq_dim))
 
     def forward(self, x):
-        print(f'x: {x}')
+        mask = torch.isnan(x)
         mean_model = mean_fill(columnwise=True)
         x_mean = mean_model(x)
-        print(f'x sorti de mean model: {x_mean}')
         y_pred = self.model(x_mean)
+        y_pred = y_pred*(mask) + torch_nan_to_num(x)
         return y_pred
     
     # def train(self, train_dataloader, test_dataloader, lr=0.001, epochs=100, verbose=False):

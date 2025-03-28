@@ -18,6 +18,14 @@ def torch_nanmean(tensor, dim=None):
     '''this function exists in pytorch >= 1.8.0'''
     mask = ~torch.isnan(tensor)
     tensor = torch.where(mask, tensor, torch.tensor(0.0, device=tensor.device))  
-    count = mask.sum(dim=dim) 
-    sum_ = tensor.sum(dim=dim)  
+    if dim is not None:
+        sum_ = torch.sum(tensor, dim=dim)
+        count = torch.sum(mask, dim=dim)
+    else:
+        sum_ = torch.sum(tensor)
+        count = torch.sum(mask)
     return sum_ / count 
+
+def torch_nan_to_num(tensor, nan=0.0):
+    return torch.where(torch.isnan(tensor), torch.tensor(nan, device=tensor.device), tensor)
+

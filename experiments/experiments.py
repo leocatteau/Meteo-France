@@ -1,13 +1,15 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+import torch
 from tqdm import tqdm
 
 from data_provider.data_factory import data_provider
 from models.baseline import mean_fill, svd, linear
 
 def masking_robustness(args, model=None, physics = False):
-    probas = np.linspace(0.01, 0.9, 40)
+    # /!\ "physics" doesnt work with tensors
+    probas = np.linspace(0.01, 0.95, 40)
     MSE_mean = {'mean': np.zeros(len(probas)), 'max': np.zeros(len(probas))}
     MSE_svd = {'mean': np.zeros(len(probas)), 'max': np.zeros(len(probas))}
     MSE_linear = {'mean': np.zeros(len(probas)), 'max': np.zeros(len(probas))}
@@ -19,11 +21,11 @@ def masking_robustness(args, model=None, physics = False):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
         mean_model = mean_fill(columnwise=True)
-        y_mean = mean_model.predict(X_test)
+        y_mean = mean_model(X_test)
         MSE_mean['mean'][i] = mean_squared_error(y_mean, y_test)
         if physics:
             MSE_mean['mean'][i] = mean_absolute_error(y_mean, y_test)
-            MSE_mean['max'][i] = np.mean(np.max(np.abs(y_mean-y_test), axis=0))
+            MSE_mean['max'][i] = np.mean(np.max(torch.abs(y_mean-y_test), axis=0))
 
         svd_model = svd()
         svd_model.train(X_train, y_train)

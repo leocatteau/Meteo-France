@@ -53,9 +53,9 @@ class SequenceMaskDataset(Dataset):
         masked_indices =  np.where(~train_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
             start = max(0, i - int(0.5 * self.window))
-            end = min(self.window, i + int(0.5 * self.window))
+            end = min(len(data_source), i + int(0.5 * self.window))
             train_mask[start:end, j] = False
-        train_mask[np.where(~self.mask)] = True
+        # train_mask[np.where(self.mask)] = True # eviter l'entrainement sur les valeures masquées à débugger
         self.train_mask = train_mask
         self.corrupted_data = self.data.copy()
         self.corrupted_data[~self.train_mask] = np.nan

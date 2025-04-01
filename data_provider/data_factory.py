@@ -74,7 +74,7 @@ class bdclim_window_horizon:
 
     def numpy(self, return_idx=False):
         if return_idx:
-            return self.numpy(), self.df.index
+            return self.df.values, self.df.index
         return self.df.values
 
     def pytorch(self):

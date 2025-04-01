@@ -1,7 +1,7 @@
 import numpy as np
 from torch.utils.data import DataLoader, Subset
 
-from data_provider.data_loader import bdclim_window_horizon
+from data_provider.data_factory import bdclim_window_horizon
 from data_provider.time_series_dataset import TimeSeriesDataset
 
 data_dict = {
@@ -19,7 +19,8 @@ class DataProvider:
                          data_path=args.data_path,
                          has_predictors=args.has_predictors)
         
-        self.dataset = TimeSeriesDataset(self.data.numpy(return_idx=True),
+        data, indices = self.data.numpy(return_idx=True)
+        self.dataset = TimeSeriesDataset(data=data,indices=indices,
                                         window=args.window,
                                         horizon=args.horizon)
         

@@ -8,24 +8,24 @@ class TimeSeriesDataset(Dataset):
         super(TimeSeriesDataset, self).__init__()
         self.data = data
         self.indices = indices
-        self.freq = indices.inferred_freq
-        self.freq = pd.tseries.frequencies.to_offset(self.freq)
         self.window = window
         self.horizon = horizon
         self.scaler = scaler
 
     def __getitem__(self, index):
-        index = self.indices[index]
-        sample = dict()
+        # is there a way to preserve time stamp indices here to make this class useful ? 
+
+        sample = (self.data[index:index+self.window], 
+                  self.data[index+self.window:index+self.window+self.horizon])
         # shouldn't we introduce a mask? and give data from other stations in prediction time window ? 
-        sample['x'] = self.data[index:index+self.window]
-        sample['y'] = self.data[index+self.window:index+self.window+self.horizon]
+        # sample['x'] = self.data[index:index+self.window]
+        # sample['y'] = self.data[index+self.window:index+self.window+self.horizon]
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample
     
     def __len__(self):
-        return len(self._indices)
+        return len(self.indices)
 
     def __repr__(self):
         return "{}(n_samples={})".format(self.__class__.__name__, len(self))

@@ -15,6 +15,9 @@ def train(model, train_dataloader, test_dataloader, lr=0.001, epochs=100, verbos
         for epoch in tqdm(range(epochs)):
             train_loss = 0.00
             for x, y in train_dataloader:
+                x = x.float().to(device)
+                y = y.float().to(device)
+
                 mask = torch.isnan(x)
                 y_pred = model(x)
                 y_pred = y_pred*(mask) + torch_nan_to_num(x)
@@ -29,6 +32,9 @@ def train(model, train_dataloader, test_dataloader, lr=0.001, epochs=100, verbos
             test_loss = 0.00
             with torch.no_grad():
                 for x, y in test_dataloader:
+                    x = x.float().to(device)
+                    y = y.float().to(device)
+
                     mask = torch.isnan(x)
                     y_pred = model(x)
                     y_pred = y_pred*(mask) + torch_nan_to_num(x)

@@ -29,3 +29,9 @@ def torch_nanmean(tensor, dim=None):
 def torch_nan_to_num(tensor, nan=0.0):
     return torch.where(torch.isnan(tensor), torch.tensor(nan, device=tensor.device), tensor)
 
+def region_to_number(regions):
+    dict_region = {}
+    for i, region in enumerate(np.unique(regions)):
+        dict_region[region] = i
+    return np.array([dict_region[region] for region in regions])
+

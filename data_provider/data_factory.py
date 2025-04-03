@@ -3,15 +3,17 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import torch
+import umap
+import umap.plot
 
-from utils.functions import Ornstein_Uhlenbeck
+from utils.functions import Ornstein_Uhlenbeck, region_to_number
 
 
 # these classes are for liberty in the preprocessing of the raw data, what do we have access to, how the graph is infered from predictors
 
 
 class bdclim:
-    def __init__(self, root_path, data_path='bdclim_safran_2022-2024.nc', has_predictors=False):
+    def __init__(self, root_path, data_path='bdclim_safran_2022-2024.nc'):
         """
         Initialize a time series dataset from a xarray dataset.
 
@@ -26,31 +28,30 @@ class bdclim:
         # set dataset dataframe
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
-        # set optional exogenous variables (predictors) dataframe
-        if has_predictors:
-            self.predictors = self.dataset.reset_coords().drop_vars(['t']).to_dataframe()
-        else:
-            self.predictors = None
+        # set exogenous variables (predictors) dataframe
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','type_temps','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
 
-    def get_adjacency(self, threshold=0.1):
-        """
-        Compute adjacency matrix from correlations in dataset
-        :param threshold: threshold for correlation
-        :return: adjacency matrix
-        """
-        if self.predictors is not None:
-            raise NotImplementedError("Adjacency matrix computation from predictors is not implemented yet.")
-        else:
-            # Compute the correlation matrix
-            corr_matrix = self.df.corr()
+    def correlation_adjacency(self, threshold=0.1):
+        corr_matrix = self.df.corr()
+        corr_matrix[corr_matrix < threshold] = 0
+        corr_matrix = corr_matrix - np.diag(np.diag(corr_matrix))
+        return corr_matrix.values
+    
+    def umap_adjacency(self, threshold=0.1, verbose=False):
+        reducer = umap.UMAP(min_dist=0.9, n_neighbors=10, metric='euclidean')
+        embedding = reducer.fit_transform(self.predictors.drop(columns='region').fillna(method='ffill'))
 
-            # Apply thresholding
-            corr_matrix[corr_matrix < threshold] = 0
+        adjacency_matrix = reducer.graph_.toarray()
+        adjacency_matrix[adjacency_matrix < threshold] = 0
+        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
 
-            return corr_matrix
+        if verbose:
+            umap.plot.points(reducer, labels=region_to_number(self.predictors['region']))
+            umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
+        return adjacency_matrix
 
     def __repr__(self):
         return "{}(nodes={}, length={})".format(self.__class__.__name__, self.n_nodes, self.__len__())
@@ -76,7 +77,7 @@ class bdclim:
             
 
 class bdclim_clean:
-    def __init__(self, root_path, data_path='bdclim_safran_2022-2024.nc', has_predictors=False):
+    def __init__(self, root_path, data_path='bdclim_safran_2022-2024.nc'):
         """
         Initialize a time series dataset from a xarray dataset.
 
@@ -95,30 +96,29 @@ class bdclim_clean:
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
         # set optional exogenous variables (predictors) dataframe
-        if has_predictors:
-            self.predictors = self.dataset.reset_coords().drop_vars(['t']).to_dataframe()
-        else:
-            self.predictors = None
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','type_temps','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
     
-    def get_adjacency(self, threshold=0.1):
-        """
-        Compute adjacency matrix from correlations in dataset
-        :param threshold: threshold for correlation
-        :return: adjacency matrix
-        """
-        if self.predictors is not None:
-            raise NotImplementedError("Adjacency matrix computation from predictors is not implemented yet.")
-        else:
-            # Compute the correlation matrix
-            corr_matrix = self.df.corr()
+    def correlation_adjacency(self, threshold=0.1):
+        corr_matrix = self.df.corr()
+        corr_matrix[corr_matrix < threshold] = 0
+        corr_matrix = corr_matrix - np.diag(np.diag(corr_matrix))
+        return corr_matrix.values
+    
+    def umap_adjacency(self, threshold=0.1, verbose=False):
+        reducer = umap.UMAP(min_dist=0.9, n_neighbors=10, metric='euclidean')
+        reducer.fit_transform(self.predictors.drop(columns='region').fillna(method='ffill'))
 
-            # Apply thresholding
-            corr_matrix[corr_matrix < threshold] = 0
+        adjacency_matrix = reducer.graph_.toarray()
+        adjacency_matrix[adjacency_matrix < threshold] = 0
+        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
 
-            return corr_matrix
+        if verbose:
+            umap.plot.points(reducer, labels=region_to_number(self.predictors['region']))
+            umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
+        return adjacency_matrix
         
     def __repr__(self):
         return "{}(nodes={}, length={})".format(self.__class__.__name__, self.n_nodes, self.__len__())

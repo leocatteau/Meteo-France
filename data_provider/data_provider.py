@@ -27,7 +27,7 @@ class DataProvider:
         Data = data_dict[args.data]
         Dataset = dataset_dict[args.dataset]
 
-        self.data = Data(root_path=args.root_path,data_path=args.data_path,has_predictors=args.has_predictors)
+        self.data = Data(root_path=args.root_path,data_path=args.data_path)
         self.dataset = Dataset(args=self.args, data_source=self.data)
         
         train_split = int(len(self.dataset) * 0.4)

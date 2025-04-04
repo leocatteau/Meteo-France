@@ -41,8 +41,8 @@ class bdclim:
         return corr_matrix.values
     
     def umap_adjacency(self, threshold=0.1, verbose=False):
-        reducer = umap.UMAP(min_dist=0.9, n_neighbors=10, metric='euclidean')
-        embedding = reducer.fit_transform(self.predictors.drop(columns='region').fillna(method='ffill'))
+        reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
+        reducer.fit_transform(self.predictors.drop(columns='region').fillna(method='ffill'))
 
         adjacency_matrix = reducer.graph_.toarray()
         adjacency_matrix[adjacency_matrix < threshold] = 0

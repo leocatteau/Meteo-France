@@ -33,5 +33,6 @@ def region_to_number(regions):
     dict_region = {}
     for i, region in enumerate(np.unique(regions)):
         dict_region[region] = i
-    return np.array([dict_region[region] for region in regions])
+    num_region = np.array([dict_region[region] for region in regions])
+    return num_region
 

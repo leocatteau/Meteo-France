@@ -16,13 +16,13 @@ class MLP(nn.Module):
 
         self.model = nn.Sequential(
             nn.Linear(seq_dim, int(0.5*hidden_dim)),
-            nn.Sigmoid(),
+            nn.ReLU(),
             #nn.BatchNorm1d(int(0.5*hidden_dim)),
             nn.Linear(int(0.5*hidden_dim), hidden_dim),
-            nn.Sigmoid(),
+            nn.ReLU(),
             #nn.BatchNorm1d(hidden_dim),
             nn.Linear(hidden_dim, int(0.5*hidden_dim)),
-            nn.Sigmoid(),
+            nn.ReLU(),
             #nn.BatchNorm1d(int(0.5*hidden_dim)),
             nn.Linear(int(0.5*hidden_dim), seq_dim)
         )

@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torch.autograd import Variable
 
 
 def Ornstein_Uhlenbeck(d, N, dt, X0, mu, theta, sigma=False):
@@ -35,4 +36,23 @@ def region_to_number(regions):
         dict_region[region] = i
     num_region = np.array([dict_region[region] for region in regions])
     return num_region
+
+def reverse_tensor(tensor=None, axis=-1):
+    if tensor is None:
+        return None
+    if tensor.dim() <= 1:
+        return tensor
+    indices = range(tensor.size()[axis])[::-1]
+    indices = Variable(torch.LongTensor(indices), requires_grad=False).to(tensor.device)
+    return tensor.index_select(axis, indices)
+
+
+def str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.lower() in {'false', 'f', '0', 'no', 'n', 'off'}:
+        return False
+    elif value.lower() in {'true', 't', '1', 'yes', 'y', 'on'}:
+        return True
+    raise ValueError(f'{value} is not a valid boolean value')
 

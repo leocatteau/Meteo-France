@@ -17,10 +17,13 @@ class WindowHorizonDataset(Dataset):
         self.coarse_frequency = self.window + self.horizon
 
     def __getitem__(self, index):
-        sample = (self.data[index:index+self.window],self.data[index+self.window:index+self.window+self.horizon])
+        #sample = (self.data[index:index+self.window],self.data[index+self.window:index+self.window+self.horizon])
         # shouldn't we introduce a mask? and give data from other stations in prediction time window ? 
-        # sample['x'] = self.data[index:index+self.window]
-        # sample['y'] = self.data[index+self.window:index+self.window+self.horizon]
+        sample = dict()
+        sample['x'] = self.data[index:index+self.window][:,:,None]
+        # sample['y'] = self.data[index+self.window:index+self.window+self.horizon][:,:,None]
+        sample['y'] = self.data[index:index+self.window][:,:,None]
+        sample['mask'] = self.mask[index:index+self.window][:,:,None]
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample

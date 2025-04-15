@@ -16,14 +16,27 @@ class WindowHorizonDataset(Dataset):
         self.mask = data_source.mask
         self.coarse_frequency = self.window + self.horizon
 
+        # artificial evaluation masking
+        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.window, dtype=bool)
+        masked_indices =  np.where(~eval_mask)
+        for i,j in zip(masked_indices[0], masked_indices[1]):
+            start = max(0, i - int(0.5 * self.window))
+            end = min(len(data_source), i + int(0.5 * self.window))
+            eval_mask[start:end, j] = False
+        self.mask = eval_mask
+        self.eval_mask = eval_mask
+        
+
     def __getitem__(self, index):
         #sample = (self.data[index:index+self.window],self.data[index+self.window:index+self.window+self.horizon])
         # shouldn't we introduce a mask? and give data from other stations in prediction time window ? 
         sample = dict()
         sample['x'] = self.data[index:index+self.window][:,:,None]
+        # sample['x'][~self.mask[index:index+self.window]] = np.nan
         # sample['y'] = self.data[index+self.window:index+self.window+self.horizon][:,:,None]
         sample['y'] = self.data[index:index+self.window][:,:,None]
         sample['mask'] = self.mask[index:index+self.window][:,:,None]
+        sample['eval_mask'] = self.eval_mask[index:index+self.window][:,:,None]
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample

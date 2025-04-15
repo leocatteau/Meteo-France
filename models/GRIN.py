@@ -331,19 +331,3 @@ class GRINet(nn.Module):
             return imputation, prediction
         return imputation
 
-    @staticmethod
-    def add_model_specific_args(parser):
-        parser.add_argument('--d-hidden', type=int, default=64)
-        parser.add_argument('--d-ff', type=int, default=64)
-        parser.add_argument('--ff-dropout', type=int, default=0.)
-        parser.add_argument('--n-layers', type=int, default=1)
-        parser.add_argument('--kernel-size', type=int, default=2)
-        parser.add_argument('--decoder-order', type=int, default=1)
-        parser.add_argument('--d-u', type=int, default=0)
-        parser.add_argument('--d-emb', type=int, default=8)
-        parser.add_argument('--layer-norm', type=str_to_bool, nargs='?', const=True, default=False)
-        parser.add_argument('--global-att', type=str_to_bool, nargs='?', const=True, default=False)
-        parser.add_argument('--merge', type=str, default='mlp')
-        parser.add_argument('--impute-only-holes', type=str_to_bool, nargs='?', const=True, default=True)
-        return parser
-

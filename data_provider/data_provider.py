@@ -31,12 +31,12 @@ class DataProvider:
         self.dataset = Dataset(args=self.args, data_source=self.data)
         
         train_split = int(len(self.dataset) * 0.4)
-        val_split = int(len(self.dataset)  * 0.6)
-        test_split = int(len(self.dataset)  * 0.8)
+        val_split = int(len(self.dataset)  * 0.2)
+        test_split = int(len(self.dataset)  * 0.4)
         # coarse indices by window size
         train_indices = np.array([i for i in range(train_split) if i % self.dataset.coarse_frequency == 0])
-        val_indices = np.array([i for i in range(val_split) if i % self.dataset.coarse_frequency == 0])
-        test_indices = np.array([i for i in range(test_split) if i % self.dataset.coarse_frequency == 0])
+        val_indices = np.array([i for i in train_indices[-1]+range(val_split) if i % self.dataset.coarse_frequency == 0])
+        test_indices = np.array([i for i in val_indices[-1]+ range(test_split) if i % self.dataset.coarse_frequency == 0])
         self.train_dataset = Subset(self.dataset, train_indices)
         self.val_dataset = Subset(self.dataset, val_indices)
         self.test_dataset = Subset(self.dataset, test_indices)

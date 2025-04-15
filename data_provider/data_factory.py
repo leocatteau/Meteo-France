@@ -5,6 +5,7 @@ import xarray as xr
 import torch
 import umap
 import umap.plot
+import matplotlib.pyplot as plt
 
 from utils.functions import Ornstein_Uhlenbeck, region_to_number
 
@@ -51,6 +52,8 @@ class bdclim:
         if verbose:
             umap.plot.points(reducer, labels=region_to_number(self.predictors['region']))
             umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
+            plt.title('Infered graph from predictors')
+            plt.show()
         return adjacency_matrix
 
     def __repr__(self):

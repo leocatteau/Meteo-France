@@ -164,7 +164,8 @@ class GRIL(nn.Module):
             # update state with original sequence filled using imputations
             h = self.update_state(inputs, h, adj)
             # store imputations and states
-            imputations.append(xs_hat_2)
+            # imputations.append(xs_hat_2)
+            imputations.append(x_s)
             predictions.append(xs_hat_1)
             states.append(torch.stack(h, dim=0))
             representations.append(repr_s)

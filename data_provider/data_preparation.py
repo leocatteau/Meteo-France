@@ -11,32 +11,38 @@ class WindowHorizonDataset(Dataset):
         super(WindowHorizonDataset, self).__init__()
         self.data, self.indices = data_source.numpy(return_idx=True)
         self.window = args.window
-        self.horizon = args.horizon
+        self.horizon = args.horizon if args.horizon else 0
         self.scaler = args.scaler
         self.mask = data_source.mask
-        self.coarse_frequency = self.window + self.horizon
+        self.mask_length = args.mask_length
+        self.coarse_frequency = self.window + self.horizon if self.horizon>0 else self.window
 
         # artificial evaluation masking
-        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.window, dtype=bool)
+        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
         masked_indices =  np.where(~eval_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
-            start = max(0, i - int(0.5 * self.window))
-            end = min(len(data_source), i + int(0.5 * self.window))
+            start = max(0, i - int(0.5 * self.mask_length))
+            end = min(len(data_source), i + int(0.5 * self.mask_length))
             eval_mask[start:end, j] = False
-        self.mask = eval_mask
-        self.eval_mask = eval_mask
-        
+        self.eval_mask = eval_mask.copy()
+        self.eval_mask[~self.mask] = True
+        self.mask[~self.eval_mask] = False
 
     def __getitem__(self, index):
         #sample = (self.data[index:index+self.window],self.data[index+self.window:index+self.window+self.horizon])
         # shouldn't we introduce a mask? and give data from other stations in prediction time window ? 
         sample = dict()
-        sample['x'] = self.data[index:index+self.window][:,:,None]
-        # sample['x'][~self.mask[index:index+self.window]] = np.nan
-        # sample['y'] = self.data[index+self.window:index+self.window+self.horizon][:,:,None]
-        sample['y'] = self.data[index:index+self.window][:,:,None]
         sample['mask'] = self.mask[index:index+self.window][:,:,None]
         sample['eval_mask'] = self.eval_mask[index:index+self.window][:,:,None]
+
+        sample['x'] = self.data[index:index+self.window][:,:,None].copy()
+        sample['x'][~sample['eval_mask']] = np.nan
+
+        if self.horizon > 0:
+            raise NotImplementedError("out of sample not implemented yet.")
+        else:
+            sample['y'] = self.data[index:index+self.window][:,:,None]
+
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample

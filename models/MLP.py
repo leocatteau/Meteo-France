@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-from models.baseline import mean_fill
 from utils.functions import torch_nan_to_num
 
 
@@ -27,10 +26,22 @@ class MLP(nn.Module):
             nn.Linear(int(0.5*hidden_dim), seq_dim)
         )
 
-    def forward(self, x):
-        mask = torch.isnan(x)
-        mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model(x)
-        y_pred = self.model(x_mean)
-        y_pred = y_pred*(mask) + torch_nan_to_num(x)
-        return y_pred
+    def forward(self, x, mask):
+        if len(x.shape) == 4:
+            # [b s n c] -> [b*s n] #need to check if it changes order for sequence testing (doesn't really matter because nn doesn't have temporal correlations)
+            x = x.squeeze(-1).view(-1, x.shape[2])
+            mask = mask.squeeze(-1).view(-1, x.shape[2])
+
+        prediction = self.model(x)
+        imputation = prediction*(mask) + torch_nan_to_num(x)
+
+        if self.training:
+            return imputation, prediction
+        return imputation
+    
+    def save_model(self, path):
+        torch.save(self.state_dict(), path)
+
+    def load_model(self, path):
+        self.load_state_dict(torch.load(path))
+        self.eval()

@@ -17,7 +17,7 @@ class WindowHorizonDataset(Dataset):
         self.mask_length = args.mask_length
         self.coarse_frequency = self.window + self.horizon if self.horizon>0 else self.window
 
-        # artificial evaluation masking
+        # artificial masking
         eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
         masked_indices =  np.where(~eval_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
@@ -29,8 +29,6 @@ class WindowHorizonDataset(Dataset):
         self.mask[~self.eval_mask] = False
 
     def __getitem__(self, index):
-        #sample = (self.data[index:index+self.window],self.data[index+self.window:index+self.window+self.horizon])
-        # shouldn't we introduce a mask? and give data from other stations in prediction time window ? 
         sample = dict()
         sample['mask'] = self.mask[index:index+self.window][:,:,None]
         sample['eval_mask'] = self.eval_mask[index:index+self.window][:,:,None]
@@ -55,9 +53,9 @@ class WindowHorizonDataset(Dataset):
     
     def dataframe(self):
         return pd.DataFrame(data=self.data, index=self.indices)
-    
+
     def pytorch(self):
-        data = self.numpy()
+        data = self.data
         return torch.FloatTensor(data)
 
     
@@ -71,20 +69,24 @@ class SequenceMaskDataset(Dataset):
         self.coarse_frequency = 1
 
         # artificial masking
-        train_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.window, dtype=bool)
-        masked_indices =  np.where(~train_mask)
+        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
+        masked_indices =  np.where(~eval_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
-            start = max(0, i - int(0.5 * self.window))
-            end = min(len(data_source), i + int(0.5 * self.window))
-            train_mask[start:end, j] = False
-        # train_mask[np.where(self.mask)] = True # eviter l'entrainement sur les valeures masquées à débugger
-        self.train_mask = train_mask
-        self.corrupted_data = self.data.copy()
-        self.corrupted_data[~self.train_mask] = np.nan
+            start = max(0, i - int(0.5 * self.mask_length))
+            end = min(len(data_source), i + int(0.5 * self.mask_length))
+            eval_mask[start:end, j] = False
+        self.eval_mask = eval_mask.copy()
+        self.eval_mask[~self.mask] = True
+        self.mask[~self.eval_mask] = False
 
     def __getitem__(self, index):
-        sample = (self.corrupted_data[index], self.data[index])
-        
+        sample = dict()
+        sample['mask'] = self.mask[index][:,:,None]
+        sample['eval_mask'] = self.eval_mask[index][:,:,None]
+
+        sample['x'] = self.data[index][:,:,None].copy()
+        sample['x'][~sample['eval_mask']] = np.nan
+
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample
@@ -97,9 +99,9 @@ class SequenceMaskDataset(Dataset):
     
     def dataframe(self):
         return pd.DataFrame(data=self.data, index=self.indices)
-    
+
     def pytorch(self):
-        data = self.numpy()
+        data = self.data
         return torch.FloatTensor(data)
     
 
@@ -112,14 +114,19 @@ class SampleMaskDataset(Dataset):
         self.coarse_frequency = 1
 
         # artificial masking
-        self.train_mask = np.zeros((len(data_source), data_source.n_nodes), dtype=bool)
-        self.train_mask[np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = 1
-        self.corrupted_data = self.data.copy()
-        self.corrupted_data[~self.train_mask] = np.nan
+        self.eval_mask = np.zeros((len(data_source), data_source.n_nodes), dtype=bool)
+        self.eval_mask[np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = 1
+        self.eval_mask[~self.mask] = True
+        self.mask[~self.eval_mask] = False
 
     def __getitem__(self, index):
-        sample = (self.corrupted_data[index], self.data[index])
-        
+        sample = dict()
+        sample['mask'] = self.mask[index][:,:,None]
+        sample['eval_mask'] = self.eval_mask[index][:,:,None]
+
+        sample['x'] = self.data[index][:,:,None].copy()
+        sample['x'][~sample['eval_mask']] = np.nan
+
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
         return sample
@@ -132,7 +139,8 @@ class SampleMaskDataset(Dataset):
     
     def dataframe(self):
         return pd.DataFrame(data=self.data, index=self.indices)
-    
+
     def pytorch(self):
-        data = self.numpy()
+        data = self.data
         return torch.FloatTensor(data)
+

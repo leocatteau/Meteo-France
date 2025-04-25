@@ -7,6 +7,7 @@ import torch.nn as nn
 from sklearn.metrics import mean_squared_error
 
 from utils.functions import torch_nanmean, torch_nan_to_num
+from sklearn.tree import plot_tree
 
 
 class mean_fill(nn.Module):
@@ -51,6 +52,8 @@ class svd():
             plt.xlabel('rank')
             plt.ylabel('MSE')
             plt.legend()
+            plt.title('Rank optimization for SVD')
+            plt.grid()
             plt.show()
 
     def predict(self, x):
@@ -67,14 +70,22 @@ class svd():
         return x_pred
     
     
-class linear():
+class random_forest():
     def __init__(self):
-        self.model = LinearRegression()
-
-    def train(self, x, y):
+        self.model = RandomForestRegressor(n_estimators=10, max_depth=5, random_state=42)
+    
+    def train(self, x, y, verbose=False):
         mean_model = mean_fill(columnwise=True)
         x_mean = mean_model(x)
         self.model.fit(x_mean, y)
+
+        if verbose:
+            tree = self.model.estimators_[0]
+            plt.figure(figsize=(20, 10))
+            plot_tree(tree, filled=True, rounded=True)
+            plt.title("Decision Tree from the Random Forest")
+            plt.show()
+            
 
     def predict(self, x):
         mask = torch.isnan(x)
@@ -86,11 +97,11 @@ class linear():
         y_pred = y_pred*(mask) + np.nan_to_num(x)
         return y_pred
     
-
-class random_forest():
-    def __init__(self):
-        self.model = RandomForestRegressor(n_estimators=10)
     
+class linear():
+    def __init__(self):
+        self.model = LinearRegression()
+
     def train(self, x, y):
         mean_model = mean_fill(columnwise=True)
         x_mean = mean_model(x)

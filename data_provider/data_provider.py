@@ -30,8 +30,8 @@ class DataProvider:
         self.data = Data(root_path=args.root_path,data_path=args.data_path)
         self.dataset = Dataset(args=self.args, data_source=self.data)
         
-        train_split = int(len(self.dataset) * 0.4)
-        val_split = int(len(self.dataset)  * 0.2)
+        train_split = int(len(self.dataset) * 0.5)
+        val_split = int(len(self.dataset)  * 0.1)
         test_split = int(len(self.dataset)  * 0.4)
         # coarse indices by window size
         train_indices = np.array([i for i in range(train_split) if i % self.dataset.coarse_frequency == 0])

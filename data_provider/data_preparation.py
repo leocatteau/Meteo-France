@@ -28,6 +28,9 @@ class WindowHorizonDataset(Dataset):
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
+        self.corrupted_data = self.data.copy()
+        self.corrupted_data[~self.eval_mask] = np.nan
+
     def __getitem__(self, index):
         sample = dict()
         sample['mask'] = self.mask[index:index+self.window][:,:,None]
@@ -63,7 +66,7 @@ class SequenceMaskDataset(Dataset):
     def __init__(self,args,data_source):
         super(SequenceMaskDataset, self).__init__()
         self.data, self.indices = data_source.numpy(return_idx=True)
-        self.window = args.window
+        self.mask_length = args.mask_length
         self.scaler = args.scaler
         self.mask = data_source.mask
         self.coarse_frequency = 1
@@ -79,13 +82,18 @@ class SequenceMaskDataset(Dataset):
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
+        self.corrupted_data = self.data.copy()
+        self.corrupted_data[~self.eval_mask] = np.nan
+
     def __getitem__(self, index):
         sample = dict()
-        sample['mask'] = self.mask[index][:,:,None]
-        sample['eval_mask'] = self.eval_mask[index][:,:,None]
+        sample['mask'] = self.mask[index][:,None]
+        sample['eval_mask'] = self.eval_mask[index][:,None]
 
-        sample['x'] = self.data[index][:,:,None].copy()
+        sample['x'] = self.data[index][:,None].copy()
         sample['x'][~sample['eval_mask']] = np.nan
+
+        sample['y'] = self.data[index][:,None].copy()
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
@@ -119,13 +127,18 @@ class SampleMaskDataset(Dataset):
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
+        self.corrupted_data = self.data.copy()
+        self.corrupted_data[~self.eval_mask] = np.nan
+
     def __getitem__(self, index):
         sample = dict()
-        sample['mask'] = self.mask[index][:,:,None]
-        sample['eval_mask'] = self.eval_mask[index][:,:,None]
+        sample['mask'] = self.mask[index][:,None]
+        sample['eval_mask'] = self.eval_mask[index][:,None]
 
-        sample['x'] = self.data[index][:,:,None].copy()
+        sample['x'] = self.data[index][:,None].copy()
         sample['x'][~sample['eval_mask']] = np.nan
+
+        sample['y'] = self.data[index][:,None].copy()
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")

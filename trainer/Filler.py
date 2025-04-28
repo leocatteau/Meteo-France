@@ -1,8 +1,9 @@
 from tqdm import tqdm
+import numpy as np
 import torch 
 import torch.nn as nn
 
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import CosineAnnealingLR, LambdaLR
 from models.baseline import mean_fill
 
 class Filler():
@@ -31,6 +32,7 @@ class Filler():
 
         # compute prediction and loss
         y_hat, _ = self.predict(batch)
+
         loss = self.loss(y_hat, y)
 
         self.optimizer.zero_grad()
@@ -49,6 +51,8 @@ class Filler():
         return loss.item()
     
     def train(self, train_dataloader, test_dataloader, verbose=False):
+        early_stopping = EarlyStopping(tolerance=5, overfit_delta=1, saturation_delta=1e-3)
+
         train_losses = []
         test_losses = []
         for epoch in tqdm(range(self.epochs)):
@@ -69,6 +73,11 @@ class Filler():
                     test_loss += loss
             test_loss /= len(test_dataloader)
             test_losses.append(test_loss)
+
+            # early stopping
+            early_stopping(train_losses, test_losses)
+            if early_stopping.early_stop:
+                break
 
             if verbose:
                 print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
@@ -125,3 +134,26 @@ class Filler():
     #         prediction = prediction.squeeze().cpu().numpy()
     #         print(f"Imputed data shape: {prediction.shape}")
     #     return prediction
+
+
+
+class EarlyStopping:
+    def __init__(self, tolerance=5, overfit_delta=0, saturation_delta=0):
+
+        self.tolerance = tolerance
+        self.overfit_delta = overfit_delta
+        self.saturation_delta = saturation_delta
+        self.counter = 0
+        self.early_stop = False
+
+    def __call__(self, train_loss, validation_loss):
+        if (validation_loss[-1] - train_loss[-1]) > self.overfit_delta:
+            self.counter +=1
+            if self.counter >= self.tolerance:  
+                self.early_stop = True
+                print("overfitting")
+
+        if len(train_loss) > self.tolerance:
+            if np.abs(train_loss[-1] - train_loss[-self.tolerance]) < self.saturation_delta:
+                self.early_stop = True
+                print("saturation")

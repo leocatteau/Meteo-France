@@ -6,9 +6,12 @@ import torch.nn as nn
 from torch.optim.lr_scheduler import CosineAnnealingLR, LambdaLR
 from models.baseline import mean_fill
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("device: ",device)
+
 class Filler():
     def __init__(self, model, model_kwargs, args):
-        self.model = model(**model_kwargs)
+        self.model = model(**model_kwargs).to(device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         self.loss = nn.MSELoss()
@@ -59,6 +62,7 @@ class Filler():
             train_loss = 0.0
             self.model.train()
             for batch in train_dataloader:
+                batch = {k: v.to(device) for k, v in batch.items()}
                 loss = self.training_step(batch)
                 train_loss += loss
             train_loss /= len(train_dataloader)
@@ -69,6 +73,7 @@ class Filler():
             self.model.train(False)
             with torch.no_grad():
                 for batch in test_dataloader:
+                    batch = {k: v.to(device) for k, v in batch.items()}
                     loss = self.test_step(batch)
                     test_loss += loss
             test_loss /= len(test_dataloader)

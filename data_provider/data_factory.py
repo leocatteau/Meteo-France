@@ -25,7 +25,9 @@ class bdclim:
         super().__init__()
 
         # load dataset
+        print("before loading dataset, path: ", os.path.join(root_path, data_path))
         self.dataset = xr.load_dataset(os.path.join(root_path, data_path))
+        print("dataset loaded")
 
         # set dataset dataframe
         self.df = self.dataset.reset_coords()['t'].to_pandas()

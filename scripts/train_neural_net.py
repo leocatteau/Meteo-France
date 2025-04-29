@@ -1,12 +1,10 @@
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
+import json
 
 import sys
 sys.path.append('..')
-
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print("device: ",device)
 
 ########################################################################
 from data_provider.data_provider import DataProvider
@@ -43,17 +41,12 @@ def main(verbose=False):
     train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader, verbose=False)
     filler.save_model('../trained_models/linear_MLP.pt')
 
-    if verbose:
-        plt.figure(figsize=(10, 4))
-        plt.plot(train_loss, label='train')
-        plt.plot(test_loss, label='test')
-        plt.yscale('log')
-        plt.ylim(0, np.max(train_loss)*1.1)
-        plt.xlabel('epoch')
-        plt.ylabel('MSE loss')
-        plt.grid()
-        plt.legend()
-        plt.show()
+    results = {
+        'train_loss': train_loss,
+        'test_loss': test_loss
+    }
+    with open('../../results/linear_MLP.json', 'w') as file:
+        json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
     main(verbose=True)

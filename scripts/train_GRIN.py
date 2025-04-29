@@ -6,7 +6,6 @@ sys.path.append('..')
 
 ########################################################################
 from data_provider.data_provider import DataProvider
-from models.linear_MLP import linear_MLP
 from models.GRIN import GRINet
 from trainer.Filler import Filler
 
@@ -41,7 +40,7 @@ def main(verbose=False):
 
     filler = Filler(GRINet, model_kwargs, filler_kwargs)
 
-    train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader, verbose=True)
+    train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
     filler.save_model('../trained_models/GRINet.pt')
 
     results = {

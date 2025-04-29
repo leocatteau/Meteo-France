@@ -92,9 +92,10 @@ class bdclim:
             return self.df.values, self.df.index
         return self.df.values
 
-    def pytorch(self):
-        data = self.numpy()
-        return torch.FloatTensor(data)
+    def pytorch(self, return_idx=False):
+        if return_idx:
+            return torch.FloatTensor(self.df.values), self.df.index
+        return torch.FloatTensor(self.df.values)
             
 
 class bdclim_clean:
@@ -174,6 +175,7 @@ class bdclim_clean:
             return self.df.values, self.df.index
         return self.df.values
 
-    def pytorch(self):
-        data = self.numpy()
-        return torch.FloatTensor(data)
+    def pytorch(self, return_idx=False):
+        if return_idx:
+            return torch.FloatTensor(self.df.values), self.df.index
+        return torch.FloatTensor(self.df.values)

@@ -3,13 +3,16 @@ import pandas as pd
 import torch 
 from torch.utils.data import Dataset
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("device: ",device)
 
 # these classes are the training preparation layers over the raw datasets, for liberty in masking processes, etc
 
 class WindowHorizonDataset(Dataset):
     def __init__(self,args,data_source):
         super(WindowHorizonDataset, self).__init__()
-        self.data, self.indices = data_source.numpy(return_idx=True)
+        self.data, self.indices = data_source.pytorch(return_idx=True)
+        self.data = self.data.to(device)
         self.window = args.window
         self.horizon = args.horizon if args.horizon else 0
         self.scaler = args.scaler

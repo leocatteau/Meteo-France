@@ -1,6 +1,3 @@
-import numpy as np
-import torch
-import matplotlib.pyplot as plt
 import json
 
 import sys
@@ -38,7 +35,7 @@ def main(verbose=False):
 
     filler = Filler(linear_MLP, model_kwargs, filler_kwargs)
 
-    train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader, verbose=False)
+    train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
     filler.save_model('../trained_models/linear_MLP.pt')
 
     results = {

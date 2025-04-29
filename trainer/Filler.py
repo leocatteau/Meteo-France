@@ -1,4 +1,4 @@
-from tqdm import tqdm
+# import time
 import numpy as np
 import torch 
 import torch.nn as nn
@@ -53,16 +53,19 @@ class Filler():
         loss = self.loss(y_hat, y)
         return loss.item()
     
-    def train(self, train_dataloader, test_dataloader, verbose=False):
+    def train(self, train_dataloader, test_dataloader):
         early_stopping = EarlyStopping(tolerance=5, overfit_delta=1, saturation_delta=1e-3)
 
         train_losses = []
         test_losses = []
-        for epoch in tqdm(range(self.epochs)):
+        for epoch in range(self.epochs):
+            # start_time = time.time()
+            # print(f"start training, time: {start_time:.2f}s")
+            print(f"start training")
             train_loss = 0.0
             self.model.train()
             for batch in train_dataloader:
-                batch = {k: v.to(device) for k, v in batch.items()}
+                #batch = {k: v.to(device) for k, v in batch.items()}
                 loss = self.training_step(batch)
                 train_loss += loss
             train_loss /= len(train_dataloader)
@@ -73,7 +76,7 @@ class Filler():
             self.model.train(False)
             with torch.no_grad():
                 for batch in test_dataloader:
-                    batch = {k: v.to(device) for k, v in batch.items()}
+                    #batch = {k: v.to(device) for k, v in batch.items()}
                     loss = self.test_step(batch)
                     test_loss += loss
             test_loss /= len(test_dataloader)
@@ -84,8 +87,8 @@ class Filler():
             if early_stopping.early_stop:
                 break
 
-            if verbose:
-                print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
+            # print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
+            print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses
 
     def impute_dataset(self, data_provider):

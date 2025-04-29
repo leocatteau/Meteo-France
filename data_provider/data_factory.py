@@ -58,8 +58,8 @@ class bdclim:
         return corr_matrix.values
     
     def umap_adjacency(self, threshold=0.1, verbose=False):
-        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
-        #predictors = self.predictors.drop(columns='region')
+        #predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = self.predictors.drop(columns='region')
         reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
         reducer.fit_transform(predictors.fillna(method='ffill'))
 
@@ -142,8 +142,8 @@ class bdclim_clean:
         return corr_matrix.values
     
     def umap_adjacency(self, threshold=0.1, verbose=False):
-        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
-        #predictors = self.predictors.drop(columns='region')
+        #predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = self.predictors.drop(columns='region')
         reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
         reducer.fit_transform(predictors.fillna(method='ffill'))
 

@@ -11,7 +11,7 @@ class WindowHorizonDataset(Dataset):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("device: ",self.device)
         self.data, self.indices = data_source.pytorch(return_idx=True)
-        self.data = self.data
+        self.data = torch.tensor(self.data)
         self.window = args.window
         self.horizon = args.horizon if args.horizon else 0
         self.scaler = args.scaler
@@ -38,8 +38,7 @@ class WindowHorizonDataset(Dataset):
         sample['mask'] = self.mask[index:index+self.window].unsqueeze(-1).to(self.device)
         sample['eval_mask'] = self.eval_mask[index:index+self.window].unsqueeze(-1).to(self.device)
 
-        sample['x'] = self.data[index:index+self.window].unsqueeze(-1).to(self.device)
-        sample['x'][~sample['eval_mask']] = torch.nan
+        sample['x'] = self.corrupted_data[index:index+self.window].unsqueeze(-1).to(self.device)
 
         if self.horizon > 0:
             raise NotImplementedError("out of sample not implemented yet.")
@@ -70,6 +69,7 @@ class SequenceMaskDataset(Dataset):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("device: ",self.device)
         self.data, self.indices = data_source.numpy(return_idx=True)
+        self.data = torch.tensor(self.data)
         self.mask_length = args.mask_length
         self.scaler = args.scaler
         self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
@@ -91,13 +91,11 @@ class SequenceMaskDataset(Dataset):
 
     def __getitem__(self, index):
         sample = dict()
-        sample['mask'] = self.mask[index].unsqueeze(-1).to(self.device)
-        sample['eval_mask'] = self.eval_mask[index].unsqueeze(-1).to(self.device)
+        sample['mask'] = self.mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
+        sample['eval_mask'] = self.eval_mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
 
-        sample['x'] = self.data[index].unsqueeze(-1).to(self.device)
-        sample['x'][~sample['eval_mask']] = torch.nan
-
-        sample['y'] = self.data[index].unsqueeze(-1).to(self.device)
+        sample['x'] = self.corrupted_data[index].unsqueeze(0).unsqueeze(-1).to(self.device)
+        sample['y'] = self.data[index].unsqueeze(0).unsqueeze(-1).to(self.device)
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
@@ -123,13 +121,14 @@ class SampleMaskDataset(Dataset):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("device: ",self.device)
         self.data, self.indices = data_source.numpy(return_idx=True)
+        self.data = torch.tensor(self.data)
         self.scaler = args.scaler
-        self.mask = torch.tensor(data_source.mask, dtype=torch.float)
+        self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
         self.coarse_frequency = 1
 
         # artificial masking
         self.eval_mask = torch.zeros((len(data_source), data_source.n_nodes), dtype=torch.bool)
-        self.eval_mask[torch.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = 1
+        self.eval_mask[torch.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = True
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
@@ -138,13 +137,11 @@ class SampleMaskDataset(Dataset):
 
     def __getitem__(self, index):
         sample = dict()
-        sample['mask'] = self.mask[index].unsqueeze(-1).to(self.device)
-        sample['eval_mask'] = self.eval_mask[index].unsqueeze(-1).to(self.device)
+        sample['mask'] = self.mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
+        sample['eval_mask'] = self.eval_mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
 
-        sample['x'] = self.data[index].unsqueeze(-1).to(self.device)
-        sample['x'][~sample['eval_mask']] = torch.nan
-
-        sample['y'] = self.data[index].unsqueeze(-1).to(self.device) 
+        sample['x'] = self.corrupted_data[index].unsqueeze(0).unsqueeze(-1).to(self.device)
+        sample['y'] = self.data[index].unsqueeze(0).unsqueeze(-1).to(self.device) 
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")

@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 
-from utils.functions import torch_nan_to_num
-
 
 class linear_MLP(nn.Module):
     def __init__(self, seq_dim):
@@ -12,15 +10,15 @@ class linear_MLP(nn.Module):
     def forward(self, x, mask, **kwargs):
         if len(x.shape) == 4:
             # [b s n c] -> [b*s n] #need to check if it changes order for sequence testing (doesn't really matter because nn doesn't have temporal correlations)
-            x = x.squeeze(-1).view(-1, x.shape[2])
-            mask = mask.squeeze(-1).view(-1, x.shape[2])
+            x = x.view(-1, x.shape[2],x.shape[3])
+            mask = mask.view(-1, mask.shape[2],mask.shape[3])
         x = x.squeeze()
         mask = mask.squeeze()
 
         prediction = self.model(x)
-        imputation = prediction*(mask) + torch_nan_to_num(x)
-        imputation = imputation.unsqueeze(-1)
-        prediction = prediction.unsqueeze(-1)
+        imputation = prediction*(mask) + torch.nan_to_num(x)
+        imputation = imputation.unsqueeze(-1).unsqueeze(1)
+        prediction = prediction.unsqueeze(-1).unsqueeze(1)
 
         if self.training:
             return imputation, prediction

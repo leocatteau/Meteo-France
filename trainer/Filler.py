@@ -2,6 +2,7 @@
 import numpy as np
 import torch 
 import torch.nn as nn
+import time
 
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from models.baseline import mean_fill
@@ -21,9 +22,10 @@ class Filler():
     def predict(self, batch):
         # include the preprocess 
         x = batch.pop('x').float()
-        mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model(x)
         mask = batch.pop('mask')
+
+        mean_model = mean_fill(columnwise=True)
+        x_mean = mean_model(x,mask)
 
         # [b s n c]
         prediction = self.model(x_mean, mask, **batch)
@@ -53,14 +55,13 @@ class Filler():
         return loss.item()
     
     def train(self, train_dataloader, test_dataloader):
-        early_stopping = EarlyStopping(tolerance=5, overfit_delta=1, saturation_delta=1e-3)
+        early_stopping = EarlyStopping(tolerance=100, overfit_delta=1, saturation_delta=1e-3)
+        start_time = time.time()
+        print(f"start training")
 
         train_losses = []
         test_losses = []
         for epoch in range(self.epochs):
-            # start_time = time.time()
-            # print(f"start training, time: {start_time:.2f}s")
-            print(f"start training")
             train_loss = 0.0
             self.model.train()
             for batch in train_dataloader:
@@ -86,8 +87,8 @@ class Filler():
             if early_stopping.early_stop:
                 break
             self.scheduler.step()
-            # print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
-            print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
+            print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
+            #print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses
 
     def impute_dataset(self, data_provider):

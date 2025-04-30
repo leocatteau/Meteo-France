@@ -5,8 +5,6 @@ from sklearn.ensemble import RandomForestRegressor
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_squared_error
-
-from utils.functions import torch_nanmean, torch_nan_to_num
 from sklearn.tree import plot_tree
 
 
@@ -15,11 +13,10 @@ class mean_fill(nn.Module):
         super(mean_fill, self).__init__()
         self.columnwise = columnwise
 
-    def forward(self, x):
-        mask = torch.isnan(x)
+    def forward(self, x, mask):
         if self.columnwise: 
-            x_pred = torch_nanmean(x,dim=1)[:,None]*mask + torch_nan_to_num(x)
-        else: x_pred = torch_nanmean(x)*mask + torch_nan_to_num(x)
+            x_pred = torch.nanmean(x,dim=2)[:,:,None,:]*mask + torch.nan_to_num(x)
+        else: x_pred = torch.nanmean(x)*mask + torch.nan_to_num(x)
         return x_pred
     
     
@@ -65,7 +62,7 @@ class svd():
         U, S, V = np.linalg.svd(x_mean, full_matrices=False)
         U, S, V = U[:,:self.rank], np.diag(S[:self.rank]), V[:self.rank,:]
         x_pred = torch.tensor(U @ S @ V).float()
-        x_pred = x_pred*(mask) + torch_nan_to_num(x)
+        x_pred = x_pred*(mask) + torch.nan_to_num(x)
 
         return x_pred
     

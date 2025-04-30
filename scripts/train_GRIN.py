@@ -20,15 +20,14 @@ def main(verbose=False):
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
-    data_kwargs.batch_size = 1
+    data_kwargs.batch_size = 10
     data_kwargs.mask_length = 24*7*3
     data_kwargs.mask_proba = 0.5
     data_kwargs.window = 24*7*3
     data_kwargs.horizon = 0
 
     data_provider = DataProvider(data_kwargs)
-    data_provider = DataProvider(data_kwargs)
-    adjacency_matrix = torch.FloatTensor(data_provider.data.umap_adjacency(threshold=0.1, verbose=False))
+    adjacency_matrix = torch.FloatTensor(data_provider.data.umap_adjacency(threshold=0.1, verbose=False)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
     train_dataloader = data_provider.train_dataloader()
     test_dataloader = data_provider.test_dataloader()
 

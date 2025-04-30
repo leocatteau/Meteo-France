@@ -3,15 +3,15 @@ import numpy as np
 import torch 
 import torch.nn as nn
 
-from torch.optim.lr_scheduler import CosineAnnealingLR, LambdaLR
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from models.baseline import mean_fill
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print("device: ",device)
 
 class Filler():
     def __init__(self, model, model_kwargs, args):
-        self.model = model(**model_kwargs).to(device)
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print("device: ", self.device)
+        self.model = model(**model_kwargs).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         self.loss = nn.MSELoss()
@@ -41,7 +41,6 @@ class Filler():
         self.optimizer.zero_grad()
         loss.backward()  
         self.optimizer.step()
-        self.scheduler.step()
         return loss.item()
     
     def test_step(self, batch):
@@ -86,7 +85,7 @@ class Filler():
             early_stopping(train_losses, test_losses)
             if early_stopping.early_stop:
                 break
-
+            self.scheduler.step()
             # print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
             print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses

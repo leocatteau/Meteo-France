@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 from torch.utils.data import DataLoader, Subset
 
 from data_provider.data_factory import bdclim, bdclim_clean

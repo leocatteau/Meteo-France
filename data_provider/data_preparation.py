@@ -16,36 +16,36 @@ class WindowHorizonDataset(Dataset):
         self.window = args.window
         self.horizon = args.horizon if args.horizon else 0
         self.scaler = args.scaler
-        self.mask = data_source.mask
+        self.mask = torch.tensor(data_source.mask, dtype=torch.bool).to(device)
         self.mask_length = args.mask_length
         self.coarse_frequency = self.window + self.horizon if self.horizon>0 else self.window
 
         # artificial masking
-        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
+        eval_mask = torch.tensor(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=torch.bool)
         masked_indices =  np.where(~eval_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
             start = max(0, i - int(0.5 * self.mask_length))
             end = min(len(data_source), i + int(0.5 * self.mask_length))
             eval_mask[start:end, j] = False
-        self.eval_mask = eval_mask.copy()
+        self.eval_mask = eval_mask.clone()
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
-        self.corrupted_data = self.data.copy()
-        self.corrupted_data[~self.eval_mask] = np.nan
+        self.corrupted_data = self.data.clone()
+        self.corrupted_data[~self.eval_mask] = torch.nan
 
     def __getitem__(self, index):
         sample = dict()
         sample['mask'] = self.mask[index:index+self.window][:,:,None]
         sample['eval_mask'] = self.eval_mask[index:index+self.window][:,:,None]
 
-        sample['x'] = self.data[index:index+self.window][:,:,None].copy()
-        sample['x'][~sample['eval_mask']] = np.nan
+        sample['x'] = self.data[index:index+self.window][:,:,None].clone()
+        sample['x'][~sample['eval_mask']] = torch.nan
 
         if self.horizon > 0:
             raise NotImplementedError("out of sample not implemented yet.")
         else:
-            sample['y'] = self.data[index:index+self.window][:,:,None]
+            sample['y'] = self.data[index:index+self.window][:,:,None].clone()
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
@@ -71,32 +71,32 @@ class SequenceMaskDataset(Dataset):
         self.data, self.indices = data_source.numpy(return_idx=True)
         self.mask_length = args.mask_length
         self.scaler = args.scaler
-        self.mask = data_source.mask
+        self.mask = torch.tensor(data_source.mask, dtype=torch.bool).to(device)
         self.coarse_frequency = 1
 
         # artificial masking
-        eval_mask = np.array(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
+        eval_mask = torch.tensor(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=bool)
         masked_indices =  np.where(~eval_mask)
         for i,j in zip(masked_indices[0], masked_indices[1]):
             start = max(0, i - int(0.5 * self.mask_length))
             end = min(len(data_source), i + int(0.5 * self.mask_length))
             eval_mask[start:end, j] = False
-        self.eval_mask = eval_mask.copy()
+        self.eval_mask = eval_mask.clone()
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
-        self.corrupted_data = self.data.copy()
-        self.corrupted_data[~self.eval_mask] = np.nan
+        self.corrupted_data = self.data.clone()
+        self.corrupted_data[~self.eval_mask] = torch.nan
 
     def __getitem__(self, index):
         sample = dict()
         sample['mask'] = self.mask[index][:,None]
         sample['eval_mask'] = self.eval_mask[index][:,None]
 
-        sample['x'] = self.data[index][:,None].copy()
-        sample['x'][~sample['eval_mask']] = np.nan
+        sample['x'] = self.data[index][:,None].clone()
+        sample['x'][~sample['eval_mask']] = torch.nan
 
-        sample['y'] = self.data[index][:,None].copy()
+        sample['y'] = self.data[index][:,None].clone()
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")
@@ -121,27 +121,27 @@ class SampleMaskDataset(Dataset):
         super(SampleMaskDataset, self).__init__()
         self.data, self.indices = data_source.numpy(return_idx=True)
         self.scaler = args.scaler
-        self.mask = data_source.mask
+        self.mask = torch.tensor(data_source.mask, dtype=torch.float).to(device)
         self.coarse_frequency = 1
 
         # artificial masking
-        self.eval_mask = np.zeros((len(data_source), data_source.n_nodes), dtype=bool)
-        self.eval_mask[np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = 1
+        self.eval_mask = torch.zeros((len(data_source), data_source.n_nodes), dtype=torch.bool)
+        self.eval_mask[torch.rand(len(data_source), data_source.n_nodes) > args.mask_proba] = 1
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False
 
-        self.corrupted_data = self.data.copy()
-        self.corrupted_data[~self.eval_mask] = np.nan
+        self.corrupted_data = self.data.clone()
+        self.corrupted_data[~self.eval_mask] = torch.nan
 
     def __getitem__(self, index):
         sample = dict()
         sample['mask'] = self.mask[index][:,None]
         sample['eval_mask'] = self.eval_mask[index][:,None]
 
-        sample['x'] = self.data[index][:,None].copy()
-        sample['x'][~sample['eval_mask']] = np.nan
+        sample['x'] = self.data[index][:,None].clone()
+        sample['x'][~sample['eval_mask']] = torch.nan
 
-        sample['y'] = self.data[index][:,None].copy()
+        sample['y'] = self.data[index][:,None].clone()
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")

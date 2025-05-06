@@ -2,7 +2,7 @@ import numpy as np
 from torch.utils.data import DataLoader, Subset
 
 from data_provider.data_factory import bdclim, bdclim_clean
-from data_provider.data_preparation import WindowHorizonDataset, SequenceMaskDataset, SampleMaskDataset
+from data_provider.data_preparation import WindowHorizonDataset, SequenceMaskDataset, SampleMaskDataset, PatchMaskDataset
 
 
 # these classes are for creating the compatible data objects for the models, depending on the training process
@@ -15,7 +15,8 @@ data_dict = {
 dataset_dict = {
     'SampleMaskDataset': SampleMaskDataset,
     'SequenceMaskDataset': SequenceMaskDataset,
-    'WindowHorizonDataset': WindowHorizonDataset
+    'WindowHorizonDataset': WindowHorizonDataset,
+    'PatchMaskDataset': PatchMaskDataset
 }
 
 class DataProvider:

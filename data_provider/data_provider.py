@@ -43,7 +43,7 @@ class DataProvider:
         self.test_dataset = Subset(self.dataset, test_indices)
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset,batch_size=self.batch_size,shuffle=True)
+        return DataLoader(self.train_dataset,batch_size=self.batch_size,shuffle=False)
 
     def val_dataloader(self):
         return DataLoader(self.val_dataset,batch_size=self.batch_size,shuffle=False)

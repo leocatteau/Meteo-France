@@ -15,8 +15,8 @@ class mean_fill(nn.Module):
 
     def forward(self, x, mask):
         if self.columnwise: 
-            x_pred = torch.nanmean(x,dim=2)[:,:,None,:]*mask + torch.nan_to_num(x)
-        else: x_pred = torch.nanmean(x)*mask + torch.nan_to_num(x)
+            x_pred = torch.nanmean(x,dim=2, keepdim=True)*(~mask) + torch.nan_to_num(x)
+        else: x_pred = torch.nanmean(x)*(~mask) + torch.nan_to_num(x)
         return x_pred
     
     

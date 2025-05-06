@@ -14,7 +14,7 @@ class Filler():
         print("device: ", self.device)
         self.model = model(**model_kwargs).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
-        self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
+        # self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         self.loss = nn.MSELoss()
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
@@ -36,8 +36,8 @@ class Filler():
         y = batch.pop('y').float()
 
         # compute prediction and loss
-        y_hat, _ = self.predict(batch)
-
+        y_hat, _ = self.predict(batch) 
+        
         loss = self.loss(y_hat, y)
 
         self.optimizer.zero_grad()
@@ -55,7 +55,7 @@ class Filler():
         return loss.item()
     
     def train(self, train_dataloader, test_dataloader):
-        early_stopping = EarlyStopping(tolerance=100, overfit_delta=1, saturation_delta=1e-3)
+        early_stopping = EarlyStopping(tolerance=10, overfit_delta=1, saturation_delta=1e-3)
         start_time = time.time()
         print(f"start training")
 
@@ -83,10 +83,10 @@ class Filler():
             test_losses.append(test_loss)
 
             # early stopping
-            early_stopping(train_losses, test_losses)
-            if early_stopping.early_stop:
-                break
-            self.scheduler.step()
+            # early_stopping(train_losses, test_losses)
+            # if early_stopping.early_stop:
+                # break
+            # self.scheduler.step()
             print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
             #print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses

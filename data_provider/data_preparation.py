@@ -73,7 +73,7 @@ class SequenceMaskDataset(Dataset):
         self.mask_length = args.mask_length
         self.scaler = args.scaler
         self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
-        self.coarse_frequency = 10
+        self.coarse_frequency = 1
 
         # artificial masking
         eval_mask = torch.tensor(np.random.rand(len(data_source), data_source.n_nodes) > args.mask_proba/self.mask_length, dtype=torch.bool)

@@ -14,7 +14,7 @@ class Filler():
         print("device: ", self.device)
         self.model = model(**model_kwargs).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
-        # self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
+        self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         self.loss = nn.MSELoss()
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
@@ -86,25 +86,23 @@ class Filler():
             # early_stopping(train_losses, test_losses)
             # if early_stopping.early_stop:
                 # break
-            # self.scheduler.step()
+            self.scheduler.step()
             print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
             #print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses
-
-    def impute_dataset(self, data_provider):
-        data = data_provider.dataset.pytorch()
-        mask = torch.FloatTensor(data_provider.dataset.mask)
+    
+    def reconstruct(self,data, mask):
+        self.model.eval()
+        self.model.train(False)
 
         # [s n] -> [b s n c]
-        x = data[None,:,:,None]
-        mask = mask[None,:,:,None].byte()
-        
+        x = data.unsqueeze(0).unsqueeze(-1).to(self.device)
+        mask = mask.unsqueeze(0).unsqueeze(-1).to(self.device)
         batch = {'x': x, 'mask': mask}
 
         with torch.no_grad():
             y_hat = self.predict(batch)
-            y_hat = y_hat.squeeze().cpu().numpy()
-        
+            y_hat = y_hat.squeeze().cpu()#.numpy()
         return y_hat
 
 
@@ -117,6 +115,22 @@ class Filler():
     def load_model(self, path):
         self.model.load_state_dict(torch.load(path))
         self.model.eval()
+
+    # def impute_dataset(self, data_provider):
+    #     data = data_provider.dataset.pytorch()
+    #     mask = torch.FloatTensor(data_provider.dataset.mask)
+
+    #     # [s n] -> [b s n c]
+    #     x = data[None,:,:,None]
+    #     mask = mask[None,:,:,None].byte()
+        
+    #     batch = {'x': x, 'mask': mask}
+
+    #     with torch.no_grad():
+    #         y_hat = self.predict(batch)
+    #         y_hat = y_hat.squeeze().cpu().numpy()
+        
+    #     return y_hat
 
     # def impute_dataloader(self, dataloader, data_provider):
     #     self.model.eval()

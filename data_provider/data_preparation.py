@@ -174,7 +174,7 @@ class PatchMaskDataset(Dataset):
 
         # artificial masking
         corrupted_sations = np.random.choice(data_source.n_nodes, size=int(data_source.n_nodes * args.mask_proba), replace=False)
-        self.eval_mask = torch.zeros((len(data_source), data_source.n_nodes), dtype=torch.bool)
+        self.eval_mask = torch.ones((len(data_source), data_source.n_nodes), dtype=torch.bool)
         self.eval_mask[int(len(data_source) * args.treshold_time):, corrupted_sations] = False
         self.eval_mask[~self.mask] = True
         self.mask[~self.eval_mask] = False

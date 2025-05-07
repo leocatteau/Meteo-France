@@ -7,6 +7,12 @@ import time
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from models.baseline import mean_fill
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+from io import BytesIO
+from PIL import Image
+import cv2
+
 
 class Filler():
     def __init__(self, model, model_kwargs, args):
@@ -104,6 +110,54 @@ class Filler():
             y_hat = self.predict(batch)
             y_hat = y_hat.squeeze().cpu()#.numpy()
         return y_hat
+
+    def latent_training(self, train_dataloader, data, mask):
+        start_time = time.time()
+        print(f"start mini training for latent space analysis")
+
+        losses = []
+        video_frames = []
+        for epoch in range(self.epochs):
+            loss = 0.0
+            self.model.train()
+            for batch in train_dataloader:
+                loss += self.training_step(batch)
+            loss /= len(train_dataloader)
+            losses.append(loss)
+            self.scheduler.step()
+            print(f"Epoch {epoch + 1}/{self.epochs}, Loss: {loss:.8f}, time: {time.time() - start_time:.2f}s")
+
+            data = data.clone().unsqueeze(0).unsqueeze(-1).to(self.device)
+            mask = mask.clone().unsqueeze(0).unsqueeze(-1).to(self.device)
+            eval_batch = {'x': data, 'mask': mask}
+            with torch.no_grad():
+                imputation, prediction = self.predict(eval_batch)
+                imputation = imputation.squeeze().cpu()
+                prediction = prediction.squeeze().cpu()
+                data = data.squeeze()
+                mask = mask.squeeze()
+
+                # load into video 
+                fig, ax = plt.subplots(figsize=(12, 6))
+                sns.heatmap(imputation.T, xticklabels=False, yticklabels=False, cmap="coolwarm", ax=ax)
+                ax.set_title("Latent prediction")
+                ax.set_xlabel("Time")
+                ax.set_ylabel("Station")
+                buf = BytesIO()
+                plt.savefig(buf, format='png')
+                plt.close(fig)
+                buf.seek(0)
+                img = Image.open(buf)
+                frame = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+                video_frames.append(frame)
+
+        # save video
+        height, width, _ = video_frames[0].shape
+        video = cv2.VideoWriter('../latent_training.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (width, height))
+        for frame in video_frames:
+            video.write(frame)
+        video.release()
+        return losses
 
 
     def trainable_parameters(self):

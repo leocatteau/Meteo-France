@@ -21,7 +21,8 @@ class Filler():
         self.model = model(**model_kwargs).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
-        self.loss = nn.MSELoss()
+        #self.loss = nn.MSELoss()
+        self.loss = masked_MSE
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
 
@@ -40,11 +41,12 @@ class Filler():
     def training_step(self, batch):
         # get the target
         y = batch.pop('y').float()
+        eval_mask = batch.pop('eval_mask')
 
         # compute prediction and loss
         y_hat, _ = self.predict(batch) 
         
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_hat, y, eval_mask)
 
         self.optimizer.zero_grad()
         loss.backward()  
@@ -54,10 +56,11 @@ class Filler():
     def test_step(self, batch):
         # get the target
         y = batch.pop('y').float()
+        eval_mask = batch.pop('eval_mask')
 
         # compute prediction and loss
         y_hat = self.predict(batch)
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_hat, y, eval_mask)
         return loss.item()
     
     def train(self, train_dataloader, test_dataloader):
@@ -233,3 +236,7 @@ class EarlyStopping:
             if np.abs(train_loss[-1] - train_loss[-self.tolerance]) < self.saturation_delta:
                 self.early_stop = True
                 print("saturation")
+
+def masked_MSE(y_true, y_pred, mask):
+    mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2)
+    return mse

@@ -32,6 +32,11 @@ class bdclim:
         # set dataset dataframe
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
+        # drop stations with only NaN values
+        total_stations = self.df.shape[1]
+        self.df = self.df.dropna(axis=1, how='all')
+        print("total stations: ", total_stations, " remaining stations: ", self.df.shape[1], " removing stations with only NaN values.")
+
         # set exogenous variables (predictors) dataframe
         self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
 

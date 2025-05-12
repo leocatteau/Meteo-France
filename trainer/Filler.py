@@ -19,9 +19,10 @@ class Filler():
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print("device: ", self.device)
         self.model = model(**model_kwargs).to(self.device)
+        self.mean_model = mean_fill(columnwise=True).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
-        #self.loss = nn.MSELoss()
+        # self.loss = nn.MSELoss()
         self.loss = masked_MSE
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
@@ -31,9 +32,7 @@ class Filler():
         x = batch.pop('x').float()
         mask = batch.pop('mask')
 
-        mean_model = mean_fill(columnwise=True)
-        x_mean = mean_model(x,mask)
-
+        x_mean = self.mean_model(x,mask)
         # [b s n c]
         prediction = self.model(x_mean, mask, **batch)
         return prediction
@@ -44,9 +43,11 @@ class Filler():
         eval_mask = batch.pop('eval_mask')
 
         # compute prediction and loss
-        y_hat, _ = self.predict(batch) 
+        y_hat, prediction = self.predict(batch)
         
-        loss = self.loss(y_hat, y, eval_mask)
+        # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
+        loss = self.loss(y_hat, y, eval_mask) # evaluate on the artificial mask only 
+        # loss = self.loss(prediction, y, mask^eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
 
         self.optimizer.zero_grad()
         loss.backward()  
@@ -60,7 +61,8 @@ class Filler():
 
         # compute prediction and loss
         y_hat = self.predict(batch)
-        loss = self.loss(y_hat, y, eval_mask)
+        # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
+        loss = self.loss(y_hat, y, eval_mask) # evaluate on the artificial mask only for testing
         return loss.item()
     
     def train(self, train_dataloader, test_dataloader):

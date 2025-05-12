@@ -20,10 +20,10 @@ def main(verbose=False):
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
-    data_kwargs.batch_size = 10
+    data_kwargs.batch_size = 50
     data_kwargs.mask_length = 24*7*3
     data_kwargs.mask_proba = 0.5
-    data_kwargs.window = 24*7*3
+    data_kwargs.window = 24*1*1
     data_kwargs.horizon = 0
 
     data_provider = DataProvider(data_kwargs)

@@ -109,7 +109,7 @@ class Filler():
         # [s n] -> [b s n c]
         x = data.unsqueeze(0).unsqueeze(-1).to(self.device)
         mask = mask.unsqueeze(0).unsqueeze(-1).to(self.device)
-        batch = {'x': x, 'mask': mask}
+        
 
         with torch.no_grad():
             y_hat = self.predict(batch)
@@ -172,7 +172,7 @@ class Filler():
         torch.save(self.model.state_dict(), path)
 
     def load_model(self, path):
-        self.model.load_state_dict(torch.load(path))
+        self.model.load_state_dict(torch.load(path, map_location=self.device, weights_only=False))
         self.model.eval()
 
     # def impute_dataset(self, data_provider):

@@ -109,7 +109,7 @@ class Filler():
         # [s n] -> [b s n c]
         x = data.unsqueeze(0).unsqueeze(-1).to(self.device)
         mask = mask.unsqueeze(0).unsqueeze(-1).to(self.device)
-        
+        batch = {'x': x, 'mask': mask}
 
         with torch.no_grad():
             y_hat = self.predict(batch)

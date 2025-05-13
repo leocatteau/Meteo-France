@@ -36,12 +36,17 @@ class DataProvider:
         val_split = int(len(self.dataset)  * 0.1)
         test_split = int(len(self.dataset)  * 0.4)
         # coarse indices by window size
+        total_indices = np.array([i for i in range(len(self.dataset)) if i % self.dataset.coarse_frequency == 0])
         train_indices = np.array([i for i in range(train_split) if i % self.dataset.coarse_frequency == 0])
         val_indices = np.array([i for i in train_indices[-1]+range(val_split) if i % self.dataset.coarse_frequency == 0])
         test_indices = np.array([i for i in val_indices[-1]+ range(test_split) if i % self.dataset.coarse_frequency == 0])
+        self.total_dataset = Subset(self.dataset, total_indices)
         self.train_dataset = Subset(self.dataset, train_indices)
         self.val_dataset = Subset(self.dataset, val_indices)
         self.test_dataset = Subset(self.dataset, test_indices)
+
+    def dataloader(self):
+        return DataLoader(self.total_dataset,batch_size=self.batch_size,shuffle=False)
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset,batch_size=self.batch_size,shuffle=True)

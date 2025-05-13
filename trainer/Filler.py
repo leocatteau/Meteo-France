@@ -115,6 +115,29 @@ class Filler():
             y_hat = self.predict(batch)
             y_hat = y_hat.squeeze().cpu()#.numpy()
         return y_hat
+    
+    def reconstruct_from_loader(self,dataloader):
+        self.model.eval()
+        self.model.train(False)
+
+        overlap = 24
+        original = []
+        reconstructed = []
+        for i, batch in enumerate(dataloader):
+            with torch.no_grad():
+                assert batch['x'].shape[0] == 1, "batch size should be 1"
+                original.append(batch['x'].squeeze().cpu())
+                # if i > 0:
+                #     batch = {torch.cat([old_batch[k], batch[k]], dim=0) for k in batch.keys()}.to(self.device)
+                #     old_batch = {k: batch[k][overlap:] for k in batch.keys()}.to(self.device)
+
+                y_hat = self.predict(batch)
+                # y_hat = y_hat[overlap:].squeeze().cpu()#.numpy()
+                y_hat = y_hat.squeeze().cpu()#.numpy()
+            reconstructed.append(y_hat)
+        original = torch.cat(original, dim=0)
+        reconstructed = torch.cat(reconstructed, dim=0)
+        return original,reconstructed
 
     def latent_training(self, train_dataloader, data, mask):
         start_time = time.time()

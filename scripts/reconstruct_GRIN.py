@@ -42,8 +42,8 @@ def main():
     corrupted_data, reconstructed_data = filler.reconstruct_from_loader(dataloader, get_original_data=True)
 
     results = {
-        'corrupted_data': corrupted_data,
-        'reconstructed_data': reconstructed_data
+        'corrupted_data': corrupted_data.detach().cpu().numpy().tolist(),
+        'reconstructed_data': reconstructed_data.detach().cpu().numpy().tolist(),
     }
 
     with open(f'../../results/GRINet_reconstructed_bdclim_safran_2023-2024.nc.json', 'w') as file:

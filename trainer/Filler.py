@@ -116,7 +116,7 @@ class Filler():
             y_hat = y_hat.squeeze().cpu()#.numpy()
         return y_hat
     
-    def reconstruct_from_loader(self,dataloader):
+    def reconstruct_from_loader(self,dataloader, get_original_data=False):
         self.model.eval()
         self.model.train(False)
 
@@ -137,7 +137,10 @@ class Filler():
             reconstructed.append(y_hat)
         original = torch.cat(original, dim=0)
         reconstructed = torch.cat(reconstructed, dim=0)
-        return original,reconstructed
+
+        if get_original_data:   
+            return original,reconstructed
+        return reconstructed
 
     def latent_training(self, train_dataloader, data, mask):
         start_time = time.time()

@@ -171,6 +171,8 @@ class PatchMaskDataset(Dataset):
         self.scaler = args.scaler
         self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
         self.coarse_frequency = 1
+        self.window = args.window
+        self.horizon = args.horizon if args.horizon else 0
 
         # artificial masking
         corrupted_sations = np.random.choice(data_source.n_nodes, size=int(data_source.n_nodes * args.mask_proba), replace=False)
@@ -184,11 +186,15 @@ class PatchMaskDataset(Dataset):
 
     def __getitem__(self, index):
         sample = dict()
-        sample['mask'] = self.mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
-        sample['eval_mask'] = self.eval_mask[index].unsqueeze(0).unsqueeze(-1).to(self.device)
+        sample['mask'] = self.mask[index:index+self.window].unsqueeze(-1).to(self.device)
+        sample['eval_mask'] = self.eval_mask[index:index+self.window].unsqueeze(-1).to(self.device)
 
-        sample['x'] = self.corrupted_data[index].unsqueeze(0).unsqueeze(-1).to(self.device)
-        sample['y'] = self.data[index].unsqueeze(0).unsqueeze(-1).to(self.device) 
+        sample['x'] = self.corrupted_data[index:index+self.window].unsqueeze(-1).to(self.device)
+
+        if self.horizon > 0:
+            raise NotImplementedError("out of sample not implemented yet.")
+        else:
+            sample['y'] = self.data[index:index+self.window].unsqueeze(-1).to(self.device)
 
         if self.scaler is not None:
             raise NotImplementedError("scaler not implemented yet.")

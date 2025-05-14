@@ -38,7 +38,7 @@ class bdclim:
         print("total stations: ", total_stations, " remaining stations: ", self.df.shape[1], " removing stations with only NaN values.")
 
         # set exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lambx','lamby']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
@@ -123,7 +123,7 @@ class bdclim_clean:
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
         # set optional exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lambx','lamby']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask

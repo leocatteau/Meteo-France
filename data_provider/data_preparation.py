@@ -5,6 +5,8 @@ from torch.utils.data import Dataset
 
 # these classes are the training preparation layers over the raw datasets, for liberty in masking processes, etc
 
+np.random.seed(42)
+
 class WindowHorizonDataset(Dataset):
     def __init__(self,args,data_source):
         super(WindowHorizonDataset, self).__init__()

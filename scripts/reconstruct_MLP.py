@@ -46,6 +46,7 @@ def main():
         'clean_data': clean_data.detach().cpu().numpy().tolist(),
         'eval_mask': eval_mask.detach().cpu().numpy().tolist(),
         'reconstructed_data': reconstructed_data.detach().cpu().numpy().tolist(),
+        'predictors': data_provider.data.predictors
     }
 
     with open(f'../../results/MLP_reconstructed_bdclim_safran_2023-2024.nc.json', 'w') as file:

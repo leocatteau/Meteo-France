@@ -120,7 +120,6 @@ class Filler():
         self.model.eval()
         self.model.train(False)
 
-        overlap = 24
         original = []
         reconstructed = []
         for i, batch in enumerate(dataloader):
@@ -138,8 +137,8 @@ class Filler():
         original = torch.cat(original, dim=0)
         reconstructed = torch.cat(reconstructed, dim=0)
 
-        if get_original_data:   
-            return original,reconstructed
+        if get_original_data:
+            return original, reconstructed
         return reconstructed
 
     def latent_training(self, train_dataloader, data, mask):

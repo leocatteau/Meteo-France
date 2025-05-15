@@ -172,9 +172,9 @@ class PatchMaskDataset(Dataset):
         self.data = torch.tensor(self.data)
         self.scaler = args.scaler
         self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
-        self.coarse_frequency = 1
         self.window = args.window
         self.horizon = args.horizon if args.horizon else 0
+        self.coarse_frequency = self.window + self.horizon if self.horizon>0 else self.window
 
         # artificial masking
         corrupted_sations = np.random.choice(data_source.n_nodes, size=int(data_source.n_nodes * args.mask_proba), replace=False)

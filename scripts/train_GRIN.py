@@ -28,7 +28,7 @@ def main():
 
     data_provider = DataProvider(data_kwargs)
     # adjacency_matrix = torch.FloatTensor(data_provider.data.umap_adjacency(threshold=0.1, verbose=False)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
-    adjacency_matrix = torch.FloatTensor(data_provider.data.correlation_adjacency(threshold=0.9, verbose=True)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
+    adjacency_matrix = torch.FloatTensor(data_provider.data.correlation_adjacency(threshold=0.9, verbose=False)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
     train_dataloader = data_provider.train_dataloader()
     test_dataloader = data_provider.test_dataloader()
 

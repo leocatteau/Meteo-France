@@ -46,6 +46,7 @@ class bdclim:
     def correlation_adjacency(self, threshold=0.1, verbose=False):
         corr_matrix = self.df.corr()
         corr_matrix[corr_matrix < threshold] = 0
+        corr_matrix.fillna(0, inplace=True)
         corr_matrix = corr_matrix - np.diag(np.diag(corr_matrix))
         if verbose:
             plt.figure(figsize=(10, 8))
@@ -63,7 +64,7 @@ class bdclim:
         return corr_matrix.values
     
     def umap_adjacency(self, threshold=0.1, verbose=False):
-        #predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
         predictors = self.predictors.drop(columns='region')
         reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
         reducer.fit_transform(predictors.fillna(method='ffill'))
@@ -123,7 +124,7 @@ class bdclim_clean:
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
         # set optional exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lambx','lamby']).isel(time=0).to_dataframe().drop(columns='time')
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
@@ -141,14 +142,15 @@ class bdclim_clean:
 
             G = nx.from_numpy_array(corr_matrix.values)
             fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-            nx.draw_networkx(G, with_labels=False, node_size=3, width=0.5, ax=ax)
+            nx.draw_networkx(G, with_labels=False, node_size=3, width=0.5, ax=ax, labels=region_to_number(self.predictors['region']))
+            plt.legend()
             plt.title('Correlation Network')
             plt.show()
 
         return corr_matrix.values
     
     def umap_adjacency(self, threshold=0.1, verbose=False):
-        #predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
         predictors = self.predictors.drop(columns='region')
         reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
         reducer.fit_transform(predictors.fillna(method='ffill'))

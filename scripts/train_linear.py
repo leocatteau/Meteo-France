@@ -13,7 +13,7 @@ from types import SimpleNamespace
 
 def main(verbose=False):
     data_kwargs = SimpleNamespace()
-    data_kwargs.data = 'bdclim'
+    data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
     data_kwargs.root_path = '../../datasets/'
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
@@ -38,7 +38,7 @@ def main(verbose=False):
     filler = Filler(linear, model_kwargs, filler_kwargs)
 
     train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
-    filler.save_model('../trained_models/linear_masked.pt')
+    filler.save_model('../trained_models/linear.pt')
 
     results = {
         'train_loss': train_loss,

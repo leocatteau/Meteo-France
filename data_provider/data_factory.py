@@ -38,7 +38,7 @@ class bdclim:
         print("total stations: ", total_stations, " remaining stations: ", self.df.shape[1], " removing stations with only NaN values.")
 
         # set exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lambx','lamby']).isel(time=0).to_dataframe().drop(columns='time')
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
@@ -152,7 +152,7 @@ class bdclim_clean:
     def umap_adjacency(self, threshold=0.1, verbose=False):
         predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
         predictors = self.predictors.drop(columns='region')
-        reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
+        reducer = umap.UMAP(min_dist=1, n_neighbors=50, metric='euclidean')
         reducer.fit_transform(predictors.fillna(method='ffill'))
 
         adjacency_matrix = reducer.graph_.toarray()
@@ -160,7 +160,7 @@ class bdclim_clean:
         adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
 
         if verbose:
-            umap.plot.points(reducer, labels=region_to_number(self.predictors['region']))
+            umap.plot.points(reducer, labels=self.predictors['region'])
             umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
         return adjacency_matrix
         

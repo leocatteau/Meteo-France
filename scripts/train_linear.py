@@ -32,7 +32,7 @@ def main(verbose=False):
     model_kwargs = dict(seq_dim=data_provider.data.n_nodes)
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 1e-5
-    filler_kwargs.epochs = 200
+    filler_kwargs.epochs = 300
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
 
     filler = Filler(linear, model_kwargs, filler_kwargs)

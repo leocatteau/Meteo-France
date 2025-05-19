@@ -282,7 +282,7 @@ class GRINet(nn.Module):
                  ff_dropout = 0.,
                  n_layers=1,
                  kernel_size=2,
-                 decoder_order=1,
+                 decoder_order=5,
                  global_att=False,
                  d_u=0,
                  d_emb=0,

@@ -28,12 +28,12 @@ def main():
     data_kwargs.horizon = 0
 
     data_provider = DataProvider(data_kwargs)
-    adjacency_matrix = torch.FloatTensor(data_provider.data.umap_adjacency(threshold=0.1, verbose=False)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
+    adjacency_matrix = torch.FloatTensor(data_provider.data.umap_adjacency(threshold=0.0, verbose=False)).to('cuda:0' if torch.cuda.is_available() else 'cpu')
     dataloader = data_provider.dataloader()
     clean_data = data_provider.dataset.data
     eval_mask = data_provider.dataset.eval_mask
 
-    model_kwargs = dict(adj=adjacency_matrix, d_in=1)
+    model_kwargs = dict(adj=adjacency_matrix, d_in=1, d_ff=data_provider.data.n_nodes, global_att=True)
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 1e-5
     filler_kwargs.epochs = 100

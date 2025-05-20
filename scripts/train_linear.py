@@ -11,11 +11,11 @@ from trainer.Filler import Filler
 from types import SimpleNamespace
 
 
-def main(verbose=False):
+def main(root_path='../../datasets/'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
-    data_kwargs.root_path = '../../datasets/'
+    data_kwargs.root_path = root_path
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
@@ -48,7 +48,7 @@ def main(verbose=False):
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    main(verbose=True)
+    main(root_path='../../datasets/')
 
 
 

@@ -31,8 +31,8 @@ def main(root_path='../../datasets/'):
 
     model_kwargs = dict(seq_dim=data_provider.data.n_nodes)
     filler_kwargs = SimpleNamespace()
-    filler_kwargs.lr = 1e-5
-    filler_kwargs.epochs = 300
+    filler_kwargs.lr = 5e-4
+    filler_kwargs.epochs = 1000
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
 
     filler = Filler(linear, model_kwargs, filler_kwargs)

@@ -14,11 +14,11 @@ from trainer.Filler import Filler
 from types import SimpleNamespace
 
 
-def main():
+def main(root_path='../../datasets/'):
     data_kwargs = SimpleNamespace()
-    data_kwargs.data = 'bdclim'
+    data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
-    data_kwargs.root_path = '../../datasets/'
+    data_kwargs.root_path = root_path
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
@@ -34,24 +34,24 @@ def main():
 
     model_kwargs = dict(seq_dim=data_provider.data.n_nodes, hidden_dim=2*data_provider.data.n_nodes)
     filler_kwargs = SimpleNamespace()
-    filler_kwargs.lr = 1e-5
-    filler_kwargs.epochs = 100
+    filler_kwargs.lr = 5e-4
+    filler_kwargs.epochs = 1000
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
 
     filler = Filler(MLP, model_kwargs, filler_kwargs)
 
     train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
-    filler.save_model('../trained_models/MLP_masked.pt')
+    filler.save_model('../trained_models/MLP.pt')
 
     results = {
         'train_loss': train_loss,
         'test_loss': test_loss
     }
-    with open('../../results/train_MLP_masked.json', 'w') as file:
+    with open('../../results/train_MLP.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    main()
+    main(root_path='../../datasets/')
 
 
 

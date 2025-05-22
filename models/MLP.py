@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from einops import rearrange
 
 from utils.functions import torch_nan_to_num
 
@@ -47,21 +48,25 @@ from utils.functions import torch_nan_to_num
 #         self.eval()
 
 class MLP(nn.Module):
-    def __init__(self, seq_dim, hidden_dim):
+    def __init__(self, seq_dim, hidden_dim, temporal=False):
         super(MLP, self).__init__()
         # self.model = nn.ModuleList([nn.Linear(seq_dim, hidden_dims[0]), nn.ReLU()])
         # for i in range(1, len(hidden_dims)):
         #     self.model.append(nn.Linear(hidden_dims[i-1], hidden_dims[i]))
         #     self.model.append(nn.ReLU())
         # self.model.append(nn.Linear(hidden_dims[-1], seq_dim))
-
         self.model = nn.Sequential(
             nn.Linear(seq_dim, int(hidden_dim)),
             nn.ReLU(),
             nn.Linear(int(hidden_dim), seq_dim)
         )
+        self.temporal = temporal
 
     def forward(self, x, mask, **kwargs):
+        if self.temporal:
+            x = rearrange(x, 'b s n c -> b n s c')
+            mask = rearrange(mask, 'b s n c -> b n s c')
+
         imputations = []
         predictions = []
         for step in range(x.shape[1]):
@@ -72,6 +77,10 @@ class MLP(nn.Module):
 
         imputations = torch.stack(imputations, dim=1)
         predictions = torch.stack(predictions, dim=1)
+
+        if self.temporal:
+            imputations = rearrange(imputations, 'b n s c -> b s n c')
+            predictions = rearrange(predictions, 'b n s c -> b s n c')
 
         if self.training:
             return imputations, predictions

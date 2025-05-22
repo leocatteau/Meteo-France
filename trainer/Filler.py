@@ -13,6 +13,8 @@ from io import BytesIO
 from PIL import Image
 import cv2
 
+from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE
+
 
 class Filler():
     def __init__(self, model, model_kwargs, args):
@@ -23,6 +25,7 @@ class Filler():
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         # self.loss = nn.MSELoss()
+        self.train_loss = spatiotemporal_masked_MSE
         self.loss = masked_MSE
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
@@ -46,7 +49,7 @@ class Filler():
         y_hat, prediction = self.predict(batch)
         
         # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
-        loss = self.loss(y_hat, y, eval_mask) # evaluate on the artificial mask only 
+        loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only 
         # loss = self.loss(prediction, y, mask^eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
 
         self.optimizer.zero_grad()
@@ -263,7 +266,3 @@ class EarlyStopping:
             if np.abs(train_loss[-1] - train_loss[-self.tolerance]) < self.saturation_delta:
                 self.early_stop = True
                 print("saturation")
-
-def masked_MSE(y_true, y_pred, mask):
-    mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2)
-    return mse

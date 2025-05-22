@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from einops import rearrange
 
 
 # class linear_MLP(nn.Module):
@@ -67,11 +68,16 @@ import torch.nn as nn
 
 
 class linear(nn.Module):
-    def __init__(self, seq_dim):
+    def __init__(self, seq_dim, temporal=False):
         super(linear, self).__init__()
         self.model = nn.Sequential(nn.Linear(seq_dim, seq_dim))
+        self.temporal = temporal
 
     def forward(self, x, mask, **kwargs):
+        if self.temporal:
+            x = rearrange(x, 'b s n c -> b n s c')
+            mask = rearrange(mask, 'b s n c -> b n s c')
+
         imputations = []
         predictions = []
         for step in range(x.shape[1]):
@@ -82,6 +88,10 @@ class linear(nn.Module):
 
         imputations = torch.stack(imputations, dim=1)
         predictions = torch.stack(predictions, dim=1)
+
+        if self.temporal:
+            imputations = rearrange(imputations, 'b n s c -> b s n c')
+            predictions = rearrange(predictions, 'b n s c -> b s n c')
 
         if self.training:
             return imputations, predictions

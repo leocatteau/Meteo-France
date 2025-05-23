@@ -11,11 +11,11 @@ from trainer.Filler import Filler
 from types import SimpleNamespace
 
 
-def main(root_path='../../datasets/'):
+def main():
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
-    data_kwargs.root_path = root_path
+    data_kwargs.root_path = '../../datasets/'
     data_kwargs.data_path = 'bdclim_safran_2023-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
@@ -32,7 +32,7 @@ def main(root_path='../../datasets/'):
     model_kwargs = dict(seq_dim=data_provider.data.n_nodes)
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 5e-4
-    filler_kwargs.epochs = 1000
+    filler_kwargs.epochs = 10
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
 
     filler = Filler(linear, model_kwargs, filler_kwargs)
@@ -48,7 +48,7 @@ def main(root_path='../../datasets/'):
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    main(root_path='../../datasets/')
+    main()
 
 
 

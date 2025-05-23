@@ -13,7 +13,7 @@ from io import BytesIO
 from PIL import Image
 import cv2
 
-from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE
+from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, mixed_loss
 
 
 class Filler():
@@ -29,6 +29,9 @@ class Filler():
         self.loss = masked_MSE
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
+        self.spatial_weight = args.spatial_weight
+        self.eta = args.eta
+        # self.graph = args.graph
 
     def predict(self, batch):
         # include the preprocess 
@@ -49,12 +52,14 @@ class Filler():
         y_hat, prediction = self.predict(batch)
         
         # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
-        loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only 
+        loss = self.train_loss(y_hat, y, eval_mask, spatial_weight=self.spatial_weight) # evaluate on the artificial mask only
         # loss = self.loss(prediction, y, mask^eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
 
         self.optimizer.zero_grad()
         loss.backward()  
         self.optimizer.step()
+
+        loss = self.loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
         return loss.item()
     
     def test_step(self, batch):

@@ -7,7 +7,7 @@
 #SBATCH --gres gpu:1
 #SBATCH --mem 8G
 #SBATCH --cpus-per-task 1
-#SBATCH --time=1:00:00
+#SBATCH --time=0:30:00
 
 # Load all modules
 module load gcc
@@ -19,9 +19,11 @@ module load cudnn
 source .venv/bin/activate
 cd Meteo-France/scripts
 
+# root_path='../../datasets/'
+
 #srun python experiments_main.py
-#srun --partition gpu --qos gpu --gres gpu:1 --mem 8G --cpus-per-task 5 --time 0-1:00:00 python -m python train_neural_net
-# srun python -m train_linear_MLP
-# srun python -m train_GRIN
-srun python -m reconstruct_GRIN
+# srun python -m train_linear --root_path $root_path
+# srun python -m train_MLP --root_path $root_path
+srun python -m train_GRIN --root_path $root_path
+# srun python -m reconstruct_GRIN
 # srun python -m hallucination_GRIN

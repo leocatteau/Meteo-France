@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/opt/softs/anaconda3/envs/Py37nomkl/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/opt/softs/anaconda3/envs/Py37nomkl/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/home/cnrm_other/cen/mrns/catteaul/workdir/Meteo-France/scripts/train_linear.py", line 7, in <module>
+    from data_provider.data_provider import DataProvider
+  File "../data_provider/data_provider.py", line 4, in <module>
+    from data_provider.data_factory import bdclim, bdclim_clean
+  File "../data_provider/data_factory.py", line 6, in <module>
+    import umap
+ModuleNotFoundError: No module named 'umap'
+srun: error: belenosndl0: task 0: Exited with exit code 1

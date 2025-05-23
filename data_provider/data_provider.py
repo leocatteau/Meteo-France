@@ -24,8 +24,8 @@ class DataProvider:
         self.args = args
         self.batch_size = args.batch_size
 
-        assert args.data in data_dict, f"Data {args.data} not found in data dictionary: {data_dict.keys()}"
-        assert args.dataset in dataset_dict, f"Dataset {args.dataset} not found in dataset dictionary: {dataset_dict.keys()}"
+        # assert args.data in data_dict, f"Data {args.data} not found in data dictionary: {data_dict.keys()}"
+        # assert args.dataset in dataset_dict, f"Dataset {args.dataset} not found in dataset dictionary: {dataset_dict.keys()}"
         Data = data_dict[args.data]
         Dataset = dataset_dict[args.dataset]
 

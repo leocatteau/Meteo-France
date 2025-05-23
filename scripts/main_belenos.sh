@@ -1,23 +1,20 @@
 #!/bin/bash
 #SBATCH --output=output.out
 #SBATCH --error=error.err
-#SBATCH --chdir /home/catteau/internship
-#SBATCH --job-name=main
+#SBATCH --job-name=imputation
 #SBATCH --partition=ndl
-#SBATCH --mem-per-cpu=8G
-# SBATCH --nodes=1
-# SBATCH --ntasks-per-node=16
-#SBATCH --time=1:00:00
+#SBATCH --time=0:05:00
 
 # Load all modules
-module load gcc
-module load python 
-module load cuda 
-module load cudnn
+# module load gcc
+# module load python 
+# module load cuda 
+# module load cudnn
 
 # Activate the environment
-source .venv/bin/activate
-cd Meteo-France/scripts
+# source .venv/bin/activate
+# conda activate .venv
+# cd /workdir/Meteo-France/scripts
 
 data_path="/scratch/work/catteaul/datasets/"
 

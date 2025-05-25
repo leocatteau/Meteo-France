@@ -7,6 +7,7 @@ import umap
 import umap.plot
 import matplotlib.pyplot as plt
 import networkx as nx
+from sklearn.neighbors import kneighbors_graph
 
 from utils.functions import Ornstein_Uhlenbeck, region_to_number
 
@@ -118,7 +119,9 @@ class bdclim_clean:
         self.dataset = xr.load_dataset(os.path.join(root_path, data_path))
 
         # drop NaN values
+        total_stations = self.dataset.sizes['num_poste']
         self.dataset = self.dataset.dropna(dim='num_poste')
+        print("total stations: ", total_stations, " remaining stations: ", self.dataset.sizes['num_poste'], " removing every station with NaN values.")
 
         # set dataset dataframe
         self.df = self.dataset.reset_coords()['t'].to_pandas()
@@ -163,6 +166,28 @@ class bdclim_clean:
             umap.plot.points(reducer, labels=self.predictors['region'])
             umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
         return adjacency_matrix
+    
+    def KNN_adjacency(self, threshold=0.1, verbose=False):
+        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = self.predictors.drop(columns='region')
+
+        adjacency_matrix = kneighbors_graph(predictors.fillna(method='ffill'), n_neighbors=10, mode='connectivity', include_self=False).toarray()
+        adjacency_matrix[adjacency_matrix < threshold] = 0
+        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
+        G = nx.from_numpy_array(adjacency_matrix)
+
+        if verbose:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(adjacency_matrix, cmap='coolwarm', interpolation='nearest')
+            plt.colorbar()
+            plt.title('KNN Adjacency Matrix')
+            plt.show()
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            nx.draw_networkx(G, with_labels=False, node_size=3, width=0.5, ax=ax)
+            plt.title('KNN Adjacency Network')
+            plt.show()
+        return adjacency_matrix, G
         
     def __repr__(self):
         return "{}(nodes={}, length={})".format(self.__class__.__name__, self.n_nodes, self.__len__())

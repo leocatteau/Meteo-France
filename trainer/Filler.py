@@ -13,7 +13,7 @@ from io import BytesIO
 from PIL import Image
 import cv2
 
-from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, mixed_loss
+from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, RG_loss, mixed_loss
 
 
 class Filler():
@@ -30,8 +30,6 @@ class Filler():
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
         self.spatial_weight = args.spatial_weight
-        self.eta = args.eta
-        # self.graph = args.graph
 
     def predict(self, batch):
         # include the preprocess 

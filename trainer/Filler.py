@@ -24,12 +24,12 @@ class Filler():
         self.mean_model = mean_fill(columnwise=True).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
-        # self.loss = nn.MSELoss()
-        self.train_loss = spatiotemporal_masked_MSE
+        self.train_loss = masked_MSE
+        # self.train_loss = spatiotemporal_masked_MSE
         self.loss = masked_MSE
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
-        self.spatial_weight = args.spatial_weight
+        # self.spatial_weight = args.spatial_weight
 
     def predict(self, batch):
         # include the preprocess 
@@ -50,7 +50,7 @@ class Filler():
         y_hat, prediction = self.predict(batch)
         
         # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
-        loss = self.train_loss(y_hat, y, eval_mask, spatial_weight=self.spatial_weight) # evaluate on the artificial mask only
+        loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
         # loss = self.loss(prediction, y, mask^eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
 
         self.optimizer.zero_grad()

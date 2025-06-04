@@ -23,7 +23,7 @@ class Filler():
         self.model = model(**model_kwargs).to(self.device)
         self.mean_model = mean_fill(columnwise=True).to(self.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
-        self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
+        # self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         self.train_loss = masked_MSE
         # self.train_loss = spatiotemporal_masked_MSE
         self.loss = masked_MSE
@@ -103,7 +103,7 @@ class Filler():
             # early_stopping(train_losses, test_losses)
             # if early_stopping.early_stop:
                 # break
-            self.scheduler.step()
+            # self.scheduler.step()
             print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}, time: {time.time() - start_time:.2f}s")
             #print(f"Epoch {epoch + 1}/{self.epochs}, Train Loss: {train_loss:.8f}, Test Loss: {test_loss:.8f}")
         return train_losses, test_losses

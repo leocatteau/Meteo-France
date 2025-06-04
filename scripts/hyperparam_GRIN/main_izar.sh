@@ -2,10 +2,10 @@
 #SBATCH --output=output.out
 #SBATCH --error=error.err
 #SBATCH --chdir /home/catteau/internship
-#SBATCH --job-name=main
+#SBATCH --job-name=modified_GRIN
 #SBATCH --partition gpu
 #SBATCH --gres gpu:1
-#SBATCH --mem 8G
+#SBATCH --mem 15G
 #SBATCH --cpus-per-task 1
 #SBATCH --time=2:30:00
 
@@ -17,9 +17,9 @@ module load cudnn
 
 # Activate the environment
 source .venv/bin/activate
-cd Meteo-France/scripts/loss
+cd Meteo-France/scripts/hyperparam_GRIN
 
-for hidden_dim in 100
+for hidden_dim in 256
 do
     echo "Running with hidden dimension: $hidden_dim"
     srun python -m train_GRIN $hidden_dim

@@ -80,6 +80,28 @@ class bdclim:
             plt.title('Infered graph from predictors')
             plt.show()
         return adjacency_matrix
+    
+    def KNN_adjacency(self, threshold=0.1, verbose=False):
+        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        predictors = self.predictors.drop(columns='region')
+
+        adjacency_matrix = kneighbors_graph(predictors.fillna(method='ffill'), n_neighbors=10, mode='connectivity', include_self=False).toarray()
+        adjacency_matrix[adjacency_matrix < threshold] = 0
+        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
+        G = nx.from_numpy_array(adjacency_matrix)
+
+        if verbose:
+            plt.figure(figsize=(10, 8))
+            plt.imshow(adjacency_matrix, cmap='coolwarm', interpolation='nearest')
+            plt.colorbar()
+            plt.title('KNN Adjacency Matrix')
+            plt.show()
+
+            fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+            nx.draw_networkx(G, with_labels=False, node_size=3, width=0.5, ax=ax)
+            plt.title('KNN Adjacency Network')
+            plt.show()
+        return adjacency_matrix, G
 
     def __repr__(self):
         return "{}(nodes={}, length={})".format(self.__class__.__name__, self.n_nodes, self.__len__())

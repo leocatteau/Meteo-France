@@ -9,7 +9,7 @@ from utils.functions import reverse_tensor, str_to_bool
 
 
 class SpatialDecoder(nn.Module):
-    def __init__(self, d_in, d_model, d_out, support_len, order=1, attention_block=False, nheads=2, dropout=0.):
+    def __init__(self, d_in, d_model, d_temporal, d_out, support_len, order=1, attention_block=False, nheads=2, dropout=0.):
         super(SpatialDecoder, self).__init__()
         self.order = order
         self.lin_in = nn.Conv1d(d_in, d_model, kernel_size=1)
@@ -20,11 +20,11 @@ class SpatialDecoder(nn.Module):
                                                 d_model=d_model,
                                                 nheads=nheads,
                                                 dropout=dropout)
-            self.lin_out = nn.Conv1d(3 * d_model, d_model, kernel_size=1)
+            self.lin_out = nn.Conv1d(2 * d_model + d_temporal, d_model, kernel_size=1)
         else:
             self.register_parameter('spatial_att', None)
             self.lin_out = nn.Conv1d(2 * d_model, d_model, kernel_size=1)
-        self.read_out = nn.Conv1d(2 * d_model, d_out, kernel_size=1)
+        self.read_out = nn.Conv1d(d_model + d_temporal, d_out, kernel_size=1)
         self.activation = nn.PReLU()
         self.adj = None
 
@@ -38,7 +38,6 @@ class SpatialDecoder(nn.Module):
             else:
                 adj = SpatialConvOrderK.compute_support_orderK(adj, self.order, include_self=False, device=x_in.device)
                 self.adj = adj if cached_support else None
-
         x_in = self.lin_in(x_in)
         out = self.graph_conv(x_in, adj)
         if self.spatial_att is not None:
@@ -57,7 +56,8 @@ class SpatialDecoder(nn.Module):
 class GRIL(nn.Module):
     def __init__(self,
                  input_size,
-                 hidden_size,
+                 hidden_size_spatial,
+                 hidden_size_temporal,
                  u_size=None,
                  n_layers=1,
                  dropout=0.,
@@ -69,7 +69,8 @@ class GRIL(nn.Module):
                  layer_norm=False):
         super(GRIL, self).__init__()
         self.input_size = int(input_size)
-        self.hidden_size = int(hidden_size)
+        self.hidden_size_spatial = int(hidden_size_spatial)
+        self.hidden_size_temporal = int(hidden_size_temporal)
         self.u_size = int(u_size) if u_size is not None else 0
         self.n_layers = int(n_layers)
         rnn_input_size = 2 * self.input_size + self.u_size  # input + mask + (eventually) exogenous
@@ -78,20 +79,21 @@ class GRIL(nn.Module):
         self.cells = nn.ModuleList()
         self.norms = nn.ModuleList()
         for i in range(self.n_layers):
-            self.cells.append(GCGRUCell(d_in=rnn_input_size if i == 0 else self.hidden_size,
-                                        num_units=self.hidden_size, support_len=support_len, order=kernel_size))
+            self.cells.append(GCGRUCell(d_in=rnn_input_size if i == 0 else self.hidden_size_temporal,
+                                        num_units=self.hidden_size_temporal, support_len=support_len, order=kernel_size))
             if layer_norm:
-                self.norms.append(nn.GroupNorm(num_groups=1, num_channels=self.hidden_size))
+                self.norms.append(nn.GroupNorm(num_groups=1, num_channels=self.hidden_size_temporal))
             else:
                 self.norms.append(nn.Identity())
         self.dropout = nn.Dropout(dropout) if dropout > 0. else None
 
         # Fist stage readout
-        self.first_stage = nn.Conv1d(in_channels=self.hidden_size, out_channels=self.input_size, kernel_size=1)
+        self.first_stage = nn.Conv1d(in_channels=self.hidden_size_temporal, out_channels=self.input_size, kernel_size=1)
 
         # Spatial decoder (rnn_input_size + hidden_size -> hidden_size)
-        self.spatial_decoder = SpatialDecoder(d_in=rnn_input_size + self.hidden_size,
-                                              d_model=self.hidden_size,
+        self.spatial_decoder = SpatialDecoder(d_in=rnn_input_size + self.hidden_size_temporal,
+                                              d_model=self.hidden_size_spatial,
+                                              d_temporal=self.hidden_size_temporal,
                                               d_out=self.input_size,
                                               support_len=2,
                                               order=decoder_order,
@@ -106,15 +108,15 @@ class GRIL(nn.Module):
     def init_hidden_states(self, n_nodes):
         h0 = []
         for l in range(self.n_layers):
-            std = 1. / torch.sqrt(torch.tensor(self.hidden_size, dtype=torch.float))
-            vals = torch.distributions.Normal(0, std).sample((self.hidden_size, n_nodes))
+            std = 1. / torch.sqrt(torch.tensor(self.hidden_size_temporal, dtype=torch.float))
+            vals = torch.distributions.Normal(0, std).sample((self.hidden_size_temporal, n_nodes))
             h0.append(nn.Parameter(vals))
         return nn.ParameterList(h0)
 
     def get_h0(self, x):
         if self.h0 is not None:
             return [h.expand(x.shape[0], -1, -1) for h in self.h0]
-        return [torch.zeros(size=(x.shape[0], self.hidden_size, x.shape[2])).to(x.device)] * self.n_layers
+        return [torch.zeros(size=(x.shape[0], self.hidden_size_temporal, x.shape[2])).to(x.device)] * self.n_layers
 
     def update_state(self, x, h, adj):
         rnn_in = x
@@ -182,7 +184,8 @@ class GRIL(nn.Module):
 class BiGRIL(nn.Module):
     def __init__(self,
                  input_size,
-                 hidden_size,
+                 hidden_size_spatial,
+                 hidden_size_temporal,
                  ff_size,
                  ff_dropout,
                  n_layers=1,
@@ -198,7 +201,8 @@ class BiGRIL(nn.Module):
                  merge='mlp'):
         super(BiGRIL, self).__init__()
         self.fwd_rnn = GRIL(input_size=input_size,
-                            hidden_size=hidden_size,
+                            hidden_size_spatial=hidden_size_spatial,
+                            hidden_size_temporal=hidden_size_temporal,
                             n_layers=n_layers,
                             dropout=dropout,
                             n_nodes=n_nodes,
@@ -209,7 +213,8 @@ class BiGRIL(nn.Module):
                             u_size=u_size,
                             layer_norm=layer_norm)
         self.bwd_rnn = GRIL(input_size=input_size,
-                            hidden_size=hidden_size,
+                            hidden_size_spatial=hidden_size_spatial,
+                            hidden_size_temporal=hidden_size_temporal,
                             n_layers=n_layers,
                             dropout=dropout,
                             n_nodes=n_nodes,
@@ -231,7 +236,7 @@ class BiGRIL(nn.Module):
         if merge == 'mlp':
             self._impute_from_states = True
             self.out = nn.Sequential(
-                nn.Conv2d(in_channels=4 * hidden_size + input_size + embedding_size,
+                nn.Conv2d(in_channels=2 * hidden_size_temporal + 2 * hidden_size_spatial + input_size + embedding_size,
                           out_channels=ff_size, kernel_size=1),
                 nn.ReLU(),
                 nn.Dropout(ff_dropout),
@@ -277,7 +282,8 @@ class GRINet(nn.Module):
     def __init__(self,
                  adj,
                  d_in,
-                 d_hidden = 64,
+                 d_hidden_spatial = 64,
+                 d_hidden_temporal = 24,
                  d_ff = 64,
                  ff_dropout = 0.,
                  n_layers=1,
@@ -292,7 +298,8 @@ class GRINet(nn.Module):
         super(GRINet, self).__init__()
         self.adj = adj
         self.d_in = d_in
-        self.d_hidden = d_hidden
+        self.d_hidden_spatial = d_hidden_spatial
+        self.d_hidden_temporal = d_hidden_temporal
         self.d_u = int(d_u) if d_u is not None else 0
         self.d_emb = int(d_emb) if d_emb is not None else 0
         self.impute_only_holes = impute_only_holes
@@ -300,7 +307,8 @@ class GRINet(nn.Module):
         self.bigrill = BiGRIL(input_size=self.d_in,
                               ff_size=d_ff,
                               ff_dropout=ff_dropout,
-                              hidden_size=self.d_hidden,
+                              hidden_size_spatial=self.d_hidden_spatial,
+                              hidden_size_temporal=self.d_hidden_temporal,
                               embedding_size=self.d_emb,
                               n_nodes=self.adj.shape[0],
                               n_layers=n_layers,

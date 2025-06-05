@@ -19,8 +19,8 @@ module load cudnn
 source .venv/bin/activate
 cd Meteo-France/scripts/hyperparam_GRIN
 
-for hidden_dim in 256
+for hidden_dim in 32
 do
     echo "Running with hidden dimension: $hidden_dim"
-    srun python -m train_GRIN $hidden_dim
+    python3 -m train_GRIN $hidden_dim
 done

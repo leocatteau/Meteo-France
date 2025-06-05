@@ -39,8 +39,9 @@ class bdclim:
         print("total stations: ", total_stations, " remaining stations: ", self.df.shape[1], " removing stations with only NaN values.")
 
         # drop stations with more than 90% NaN values
-        self.df = self.df.loc[:, self.df.isnull().mean() < 0.9]
-        print("remaining stations after dropping more than 90% NaN values: ", self.df.shape[1])
+        threshold = 1 * self.df.shape[0]
+        self.df = self.df.dropna(axis=1, thresh=threshold)
+        print(f"Remaining stations: {self.df.shape[1]} out of {self.dataset.sizes['num_poste']}")
 
         # set exogenous variables (predictors) dataframe
         self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')

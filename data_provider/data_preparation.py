@@ -18,6 +18,7 @@ class WindowHorizonDataset(Dataset):
         self.horizon = args.horizon if args.horizon else 0
         self.scaler = args.scaler
         self.mask = torch.tensor(data_source.mask, dtype=torch.bool)
+        self.exogenous_vars = torch.tensor(data_source.exogenous_vars) if data_source.exogenous_vars is not None else None
         self.mask_length = args.mask_length
         self.coarse_frequency = self.window + self.horizon if self.horizon>0 else self.window
 
@@ -39,6 +40,8 @@ class WindowHorizonDataset(Dataset):
         sample = dict()
         sample['mask'] = self.mask[index:index+self.window].unsqueeze(-1).to(self.device)
         sample['eval_mask'] = self.eval_mask[index:index+self.window].unsqueeze(-1).to(self.device)
+        if self.exogenous_vars is not None:
+            sample['exogenous_vars'] = self.exogenous_vars[index:index+self.window].unsqueeze(-1).to(self.device)
 
         sample['x'] = self.corrupted_data[index:index+self.window].unsqueeze(-1).to(self.device)
 

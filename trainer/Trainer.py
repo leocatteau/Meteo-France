@@ -30,6 +30,7 @@ class Trainer():
         self.epochs = args.epochs
         self.keep_proba = args.keep_proba
         # self.spatial_weight = args.spatial_weight
+        self.exogenous_vars = args.exogenous_vars if hasattr(args, 'exogenous_vars') else False
 
     def predict(self, batch):
         # include the preprocess 
@@ -38,7 +39,11 @@ class Trainer():
 
         x_mean = self.mean_model(x,mask)
         # [b s n c]
-        prediction = self.model(x_mean, mask, **batch)
+        if self.exogenous_vars:
+            exogenous_vars = batch.pop('exogenous_vars')
+            prediction = self.model(x_mean, mask, u=exogenous_vars, **batch)
+        else:
+            prediction = self.model(x_mean, mask, **batch)
         return prediction
 
     def training_step(self, batch):

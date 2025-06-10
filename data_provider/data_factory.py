@@ -43,8 +43,10 @@ class bdclim:
         self.df = self.df.dropna(axis=1, thresh=threshold)
         print(f"Remaining stations: {self.df.shape[1]} out of {self.dataset.sizes['num_poste']}")
 
-        # set exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
+        # set optional exogenous variables (predictors) dataframe
+        self.exogenous_vars = self.dataset.reset_coords()['type_temps'].to_pandas().reset_index(drop=True).values
+        self.exogenous_vars = np.transpose(np.tile(self.exogenous_vars, (self.df.shape[1], 1)))
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon', 'type_temps']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask
@@ -154,7 +156,9 @@ class bdclim_clean:
         self.df = self.dataset.reset_coords()['t'].to_pandas()
 
         # set optional exogenous variables (predictors) dataframe
-        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
+        self.exogenous_vars = self.dataset.reset_coords()['type_temps'].to_pandas().reset_index(drop=True).values
+        self.exogenous_vars = np.transpose(np.tile(self.exogenous_vars, (self.df.shape[1], 1)))
+        self.predictors = self.dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon', 'type_temps']).isel(time=0).to_dataframe().drop(columns='time')
 
         mask = (~np.isnan(self.df.values)).astype('uint8')
         self.mask = mask

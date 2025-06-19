@@ -50,13 +50,20 @@ class Trainer():
         # get the target
         y = batch.pop('y').float()
         eval_mask = batch.pop('eval_mask')
+        mask = batch['mask']
 
         # compute prediction and loss
         y_hat, prediction = self.predict(batch)
+
+        # print('y_hat',y_hat)
+        # print('prediction',prediction)
         
         # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
         loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
-        # loss = self.loss(prediction, y, mask^eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
+        # loss = self.train_loss(prediction, y, eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
+
+        # masking_proba = torch.sum(~eval_mask) / eval_mask.numel()
+        # loss = loss / masking_proba # normalize the loss by the number of masked values
 
         self.optimizer.zero_grad()
         loss.backward()  

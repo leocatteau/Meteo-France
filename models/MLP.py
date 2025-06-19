@@ -71,7 +71,8 @@ class MLP(nn.Module):
         predictions = []
         for step in range(x.shape[1]):
             prediction = self.model(x[:,step,:,:].squeeze()).unsqueeze(-1)
-            imputation = prediction*(~mask[:,step,:,:]) + torch.nan_to_num(x[:,step,:,:])
+            # imputation = prediction*(~mask[:,step,:,:]) + torch.nan_to_num(x[:,step,:,:])
+            imputation = torch.where(mask[:,step,:,:], x[:,step,:,:], prediction)
             predictions.append(prediction)
             imputations.append(imputation)
 

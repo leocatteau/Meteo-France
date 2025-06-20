@@ -9,7 +9,7 @@ sys.path.append('../..')
 ########################################################################
 from data_provider.data_provider import DataProvider
 from models.MLP import MLP
-from trainer.Trainer import Trainer
+from training.training import Trainer
 
 from types import SimpleNamespace
 

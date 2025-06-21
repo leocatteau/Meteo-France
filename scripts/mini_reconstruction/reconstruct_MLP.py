@@ -23,10 +23,11 @@ def main():
     filler_kwargs.mask_proba = 0.0
     filler_kwargs.mask_length = 0
     filler_kwargs.window = 24*1*1
+    filler_kwargs.overlap = True
     filler_kwargs.model_path = '../../../results/mini_reconstruction/model/MLP_diffusion.pt'
 
     filler = Filler(data_kwargs, MLP, model_kwargs, filler_kwargs)
-    original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, loss, RG_loss = filler.reconstruct()
+    original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
 
     results = {
         'original_data': original_data.tolist(),
@@ -34,8 +35,10 @@ def main():
         'predictors': predictors.to_json(),
         'mask': mask.tolist(),
         'reconstructed_data': reconstructed_data.tolist(),
-        'loss': loss.tolist(),
-        'RG_loss': RG_loss.tolist(),
+        'RMSE': RMSE.tolist(),
+        'MAE': MAE.tolist(),
+        'RG_RMSE': RG_RMSE.tolist(),
+        'RG_MAE': RG_MAE.tolist(),
     }
 
     print("Reconstruction completed. Saving results...")

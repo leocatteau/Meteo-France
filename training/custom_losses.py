@@ -9,6 +9,18 @@ def masked_MSE(y_true, y_pred, mask):
     mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2)
     return mse
 
+def masked_RMSE(y_true, y_pred, mask):
+    # should the model be trained only to fitting holes? this reduces a lot the data available to learn the process
+    rmse = torch.sqrt(torch.mean((y_true[~mask] - y_pred[~mask]) ** 2))
+    print(mask.sum(), mask.numel())
+    print(f'Masked MSE: {rmse.item()}')
+    return rmse
+
+def masked_MAE(y_true, y_pred, mask):
+    # should the model be trained only to fitting holes? this reduces a lot the data available to learn the process
+    mae = torch.mean(torch.abs(y_true[~mask] - y_pred[~mask]))
+    return mae
+
 def spatiotemporal_masked_MSE(y_true, y_pred, mask, spatial_weight=0.5):
     y_true = y_true.squeeze()
     y_pred = y_pred.squeeze()
@@ -66,7 +78,7 @@ def scatter_mean(values, indices, num_clusters):
     means = sums / torch.clamp(counts, min=1)  # avoid div by zero
     return means
 
-def coarse_mse(pred, target, cluster_labels):
+def coarse_rmse(pred, target, cluster_labels):
     B, S, N, _ = pred.shape
     pred_flat = pred.view(-1, N)  # [B*S, N]
     target_flat = target.view(-1, N)
@@ -81,28 +93,47 @@ def coarse_mse(pred, target, cluster_labels):
     pred_mean = scatter_mean(pred_vals, cluster_labels, num_clusters)
     target_mean = scatter_mean(target_vals, cluster_labels, num_clusters)
 
-    return torch.mean((pred_mean - target_mean) ** 2)
+    return torch.sqrt(torch.mean((pred_mean - target_mean) ** 2))
 
-def RG_MSE(pred, target, adjacency_matrix):
+def coarse_mae(pred, target, cluster_labels):
+    B, S, N, _ = pred.shape
+    pred_flat = pred.view(-1, N)  # [B*S, N]
+    target_flat = target.view(-1, N)
+
+    cluster_labels = torch.tensor(cluster_labels, device=pred.device)
+    cluster_labels = cluster_labels.unsqueeze(0).expand(B * S, -1).reshape(-1)
+
+    pred_vals = pred_flat.reshape(-1)
+    target_vals = target_flat.reshape(-1)
+
+    num_clusters = cluster_labels.max().item() + 1
+    pred_mean = scatter_mean(pred_vals, cluster_labels, num_clusters)
+    target_mean = scatter_mean(target_vals, cluster_labels, num_clusters)
+
+    return torch.mean(torch.abs(pred_mean - target_mean))
+
+def RG_loss(pred, target, adjacency_matrix):
     N = adjacency_matrix.shape[0]
     scales = np.linspace(1, N // 2.5, num=5, dtype=int).tolist()
     weights = [1.0 / len(scales)] * len(scales)
 
-    loss = 0.0
+    RMSE = 0.0
+    MAE = 0.0
     for scale, w in zip(scales, weights):
         num_clusters = max(2, N // scale)
         labels = cluster_from_adjacency(adjacency_matrix, num_clusters)
-        loss += w * coarse_mse(pred, target, labels)
+        RMSE += w * coarse_rmse(pred, target, labels)
+        MAE += w * coarse_mae(pred, target, labels)
+    return RMSE, MAE
 
-    return loss
-
-def masked_RG_MSE(pred, target, adjacency_matrix, mask):
+def masked_RG_RMSE_MAE(pred, target, adjacency_matrix, mask):
     pred = pred.unsqueeze(0) # [1, S, N, C]
     target = target.unsqueeze(0) # [1, S, N, C]
     mask = mask.unsqueeze(0) # [1, S, N, C]
     pred[~mask] = np.nan
-    loss = RG_MSE(pred, target, adjacency_matrix)
-    return loss
+    RMSE, MAE = RG_loss(pred, target, adjacency_matrix)
+    return RMSE, MAE
+
 
 def mixed_loss(y_true, y_pred, mask, spatial_weight=0.5, eta=0.1, graph=None):
     spatiotemporal_mse = spatiotemporal_masked_MSE(y_true, y_pred, mask, spatial_weight)

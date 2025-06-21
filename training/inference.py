@@ -7,7 +7,8 @@ import umap
 from sklearn.neighbors import kneighbors_graph
 
 from models.baseline import mean_fill
-from training.custom_losses import masked_MSE, masked_RG_MSE
+from training.custom_losses import masked_MSE, masked_MAE, masked_RMSE, masked_RG_RMSE_MAE
+
 
 class Filler():
     def __init__(self, data_kwargs, model, model_kwargs, args):
@@ -29,7 +30,7 @@ class Filler():
         self.corrupt_data()
 
         self.window_size = args.window
-        self.overlap = args.overlap if hasattr(args, 'overlap') else 0
+        self.overlap = args.overlap if hasattr(args, 'overlap') else False
 
     
     def load_data(self):
@@ -168,16 +169,22 @@ class Filler():
         avoid_m = ((eval_m)^(~m))
 
         x_pred = torch.zeros_like(x)
-        loss = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
-        RG_loss = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
+        RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
+        MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
+        RG_RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
+        RG_MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         for window in range(x.shape[0]):
             print(f'Processing window {window+1}/{x.shape[0]}')
-            x_pred[window] = self.predict(x[window].unsqueeze(0), m[window].unsqueeze(0))
-            loss[window] = masked_MSE(x_pred[window], x_clean[window], eval_m[window])
-            RG_loss[window] = masked_RG_MSE(x_pred[window], x_clean[window], self.adjacency_matrix, avoid_m[window])
+            if self.overlap:
+                x_pred[window] = self.predict(torch.cat([x[window-1], x[window]], dim=0).unsqueeze(0), torch.cat([m[window-1], m[window]], dim=0).unsqueeze(0))[:,-24:,:,:]
+            else:
+                x_pred[window] = self.predict(x[window].unsqueeze(0), m[window].unsqueeze(0))
+            RMSE[window] = masked_RMSE(x_pred[window], x_clean[window], eval_m[window])
+            MAE[window] = masked_MAE(x_pred[window], x_clean[window], eval_m[window])
+            RG_RMSE[window], RG_MAE[window] = masked_RG_RMSE_MAE(x_pred[window], x_clean[window], self.adjacency_matrix, avoid_m[window])
 
         # reshape the prediction to the original shape 
         x_pred = einops.rearrange(x_pred, 'b w n 1 -> (b w) n')
         self.reconstructed_data = x_pred.cpu().detach().numpy()
 
-        return self.original_data, self.corrupted_data, self.predictors, self.mask, self.eval_mask, self.reconstructed_data, loss, RG_loss
+        return self.original_data, self.corrupted_data, self.predictors, self.mask, self.eval_mask, self.reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE

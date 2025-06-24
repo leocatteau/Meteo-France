@@ -32,17 +32,17 @@ class DataProvider:
         self.data = Data(root_path=args.root_path,data_path=args.data_path)
         self.dataset = Dataset(args=self.args, data_source=self.data)
         
-        train_split = int(len(self.dataset) * 0.5)
-        val_split = int(len(self.dataset)  * 0.1)
-        test_split = int(len(self.dataset)  * 0.4)
+        test_split = int(len(self.dataset)  * 0.1)
+        # val_split = int(len(self.dataset)  * 0.0)
+        train_split = int(len(self.dataset) * 0.9)
         # coarse indices by window size
         total_indices = np.array([i for i in range(len(self.dataset)) if i % self.dataset.coarse_frequency == 0])
-        train_indices = np.array([i for i in range(train_split) if i % self.dataset.coarse_frequency == 0])
-        val_indices = np.array([i for i in train_indices[-1]+range(val_split) if i % self.dataset.coarse_frequency == 0])
-        test_indices = np.array([i for i in val_indices[-1]+ range(test_split) if i % self.dataset.coarse_frequency == 0])
+        test_indices = np.array([i for i in range(test_split) if i % self.dataset.coarse_frequency == 0])
+        # val_indices = np.array([i for i in test_indices[-1]+range(val_split) if i % self.dataset.coarse_frequency == 0])
+        train_indices = np.array([i for i in test_indices[-1]+ range(train_split) if i % self.dataset.coarse_frequency == 0])
         self.total_dataset = Subset(self.dataset, total_indices)
         self.train_dataset = Subset(self.dataset, train_indices)
-        self.val_dataset = Subset(self.dataset, val_indices)
+        # self.val_dataset = Subset(self.dataset, val_indices)
         self.test_dataset = Subset(self.dataset, test_indices)
 
     def dataloader(self):
@@ -51,8 +51,8 @@ class DataProvider:
     def train_dataloader(self):
         return DataLoader(self.train_dataset,batch_size=self.batch_size,shuffle=True)
 
-    def val_dataloader(self):
-        return DataLoader(self.val_dataset,batch_size=self.batch_size,shuffle=False)
+    # def val_dataloader(self):
+    #     return DataLoader(self.val_dataset,batch_size=self.batch_size,shuffle=False)
     
     def test_dataloader(self):
         return DataLoader(self.test_dataset,batch_size=self.batch_size,shuffle=False)

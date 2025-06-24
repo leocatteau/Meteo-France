@@ -4,7 +4,7 @@ import sys
 sys.path.append('../..')
 
 ########################################################################
-from models.MLP import MLP
+from models.GRIN import GRINet
 from training.inference import Filler
 
 from types import SimpleNamespace
@@ -24,9 +24,9 @@ def main():
     filler_kwargs.mask_length = 0
     filler_kwargs.window = 24*1*1
     filler_kwargs.overlap = False
-    filler_kwargs.model_path = '../../../results/mini_reconstruction/model/MLP_diffusion.pt'
+    filler_kwargs.model_path = '../../../results/mini_reconstruction/model/GRIN_diffusion.pt'
 
-    filler = Filler(data_kwargs, MLP, model_kwargs, filler_kwargs)
+    filler = Filler(data_kwargs, GRINet, model_kwargs, filler_kwargs)
     original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
 
     results = {
@@ -42,7 +42,7 @@ def main():
     }
 
     print("Reconstruction completed. Saving results...")
-    with open(f'../../../results/mini_reconstruction/data/reconstruction_diffusion_MLP.json', 'w') as file:
+    with open(f'../../../results/mini_reconstruction/data/reconstruction_diffusion_GRIN.json', 'w') as file:
         json.dump(results, file, indent=4)
     print("Reconstruction saved.")
 

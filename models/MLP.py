@@ -58,6 +58,7 @@ class MLP(nn.Module):
         self.model = nn.Sequential(
             nn.Linear(seq_dim, int(hidden_dim)),
             nn.ReLU(),
+            # nn.Dropout(0.1),
             nn.Linear(int(hidden_dim), seq_dim)
         )
         self.temporal = temporal

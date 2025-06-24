@@ -198,20 +198,20 @@ class BiGRIL(nn.Module):
                  u_size=0,
                  embedding_size=0,
                  layer_norm=False,
-                 merge='mlp'):
+                 merge='back'):
         super(BiGRIL, self).__init__()
-        self.fwd_rnn = GRIL(input_size=input_size,
-                            hidden_size_spatial=hidden_size_spatial,
-                            hidden_size_temporal=hidden_size_temporal,
-                            n_layers=n_layers,
-                            dropout=dropout,
-                            n_nodes=n_nodes,
-                            support_len=support_len,
-                            kernel_size=kernel_size,
-                            decoder_order=decoder_order,
-                            global_att=global_att,
-                            u_size=u_size,
-                            layer_norm=layer_norm)
+        # self.fwd_rnn = GRIL(input_size=input_size,
+        #                     hidden_size_spatial=hidden_size_spatial,
+        #                     hidden_size_temporal=hidden_size_temporal,
+        #                     n_layers=n_layers,
+        #                     dropout=dropout,
+        #                     n_nodes=n_nodes,
+        #                     support_len=support_len,
+        #                     kernel_size=kernel_size,
+        #                     decoder_order=decoder_order,
+        #                     global_att=global_att,
+        #                     u_size=u_size,
+        #                     layer_norm=layer_norm)
         self.bwd_rnn = GRIL(input_size=input_size,
                             hidden_size_spatial=hidden_size_spatial,
                             hidden_size_temporal=hidden_size_temporal,
@@ -245,6 +245,8 @@ class BiGRIL(nn.Module):
         elif merge in ['mean', 'sum', 'min', 'max']:
             self._impute_from_states = False
             self.out = getattr(torch, merge)
+        elif merge == 'back':
+            self._impute_from_states = False
         else:
             raise ValueError("Merge option %s not allowed." % merge)
         self.supp = None
@@ -256,24 +258,27 @@ class BiGRIL(nn.Module):
             supp = SpatialConvOrderK.compute_support(adj, x.device)
             self.supp = supp if cached_support else None
         # Forward
-        fwd_out, fwd_pred, fwd_repr, _ = self.fwd_rnn(x, supp, mask=mask, u=u, cached_support=cached_support)
+        # fwd_out, fwd_pred, fwd_repr, _ = self.fwd_rnn(x, supp, mask=mask, u=u, cached_support=cached_support)
         # Backward
         rev_x, rev_mask, rev_u = [reverse_tensor(tens) for tens in (x, mask, u)]
         *bwd_res, _ = self.bwd_rnn(rev_x, supp, mask=rev_mask, u=rev_u, cached_support=cached_support)
         bwd_out, bwd_pred, bwd_repr = [reverse_tensor(res) for res in bwd_res]
 
-        if self._impute_from_states:
-            inputs = [fwd_repr, bwd_repr, mask]
-            if self.emb is not None:
-                b, *_, s = fwd_repr.shape  # fwd_h: [batches, channels, nodes, steps]
-                inputs += [self.emb.view(1, *self.emb.shape, 1).expand(b, -1, -1, s)]  # stack emb for batches and steps
-            imputation = torch.cat(inputs, dim=1)
-            imputation = self.out(imputation)
-        else:
-            imputation = torch.stack([fwd_out, bwd_out], dim=1)
-            imputation = self.out(imputation, dim=1)
+        # if self._impute_from_states:
+        #     inputs = [fwd_repr, bwd_repr, mask]
+        #     if self.emb is not None:
+        #         b, *_, s = fwd_repr.shape  # fwd_h: [batches, channels, nodes, steps]
+        #         inputs += [self.emb.view(1, *self.emb.shape, 1).expand(b, -1, -1, s)]  # stack emb for batches and steps
+        #     imputation = torch.cat(inputs, dim=1)
+        #     imputation = self.out(imputation)
+        # else:
+        #     imputation = torch.stack([fwd_out, bwd_out], dim=1)
+        #     imputation = self.out(imputation, dim=1)
 
-        predictions = torch.stack([fwd_out, bwd_out, fwd_pred, bwd_pred], dim=0)
+        # predictions = torch.stack([fwd_out, bwd_out, fwd_pred, bwd_pred], dim=0)
+
+        imputation = bwd_out
+        predictions = bwd_pred
 
         return imputation, predictions
 

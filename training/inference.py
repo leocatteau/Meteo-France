@@ -32,7 +32,7 @@ class Filler():
         self.window_size = args.window
         self.overlap = args.overlap if hasattr(args, 'overlap') else False
 
-    
+        
     def load_data(self):
         # load dataset
         dataset = xr.load_dataset(os.path.join(self.root_path, self.data_path))
@@ -48,7 +48,7 @@ class Filler():
             # dataset = dataset.isel(num_poste=valid_stations)
             # print("remaining stations after 5 years threshold: ", dataset.dims['num_poste'])
 
-        # load corrupted data
+        # load original data
         self.original_data = dataset['t'].values
         self.original_data = torch.tensor(self.original_data, dtype=torch.float32).to(self.device)
 
@@ -130,12 +130,13 @@ class Filler():
             self.corrupted_data = torch.tensor(self.corrupted_data, dtype=torch.float32).to(self.device)
 
             # set exogenous variables (predictors) dataframe
-            mask = np.array(~np.isnan(self.original_data)).astype('uint8')
+            # mask = np.array(~np.isnan(self.original_data)).astype('uint8')
             eval_mask = (~np.isnan(df.values)).astype('uint8')
-            eval_mask[~mask] = True
+            eval_mask[~self.mask] = True
             self.eval_mask = torch.tensor(eval_mask, dtype=torch.bool)
-            mask = (~np.isnan(df.values)).astype('uint8')
-            self.mask = torch.tensor(mask, dtype=torch.bool)
+            self.mask[~self.eval_mask] = False
+            # mask = (~np.isnan(df.values)).astype('uint8')
+            # self.mask = torch.tensor(mask, dtype=torch.bool)
 
     def load_model(self, path):
         self.model.load_state_dict(torch.load(path, map_location=self.device, weights_only=False))
@@ -176,12 +177,12 @@ class Filler():
         for window in range(x.shape[0]):
             print(f'Processing window {window+1}/{x.shape[0]}')
             if self.overlap:
-                x_pred[window] = self.predict(torch.cat([x[window-1], x[window]], dim=0).unsqueeze(0), torch.cat([m[window-1], m[window]], dim=0).unsqueeze(0))[:,-24:,:,:]
+                x_pred[-window] = self.predict(torch.cat([x[-window+1], x[-window]], dim=0).unsqueeze(0), torch.cat([m[-window+1], m[-window]], dim=0).unsqueeze(0))[:,:self.window_size,:,:]
             else:
-                x_pred[window] = self.predict(x[window].unsqueeze(0), m[window].unsqueeze(0))
-            RMSE[window] = masked_RMSE(x_pred[window], x_clean[window], eval_m[window])
-            MAE[window] = masked_MAE(x_pred[window], x_clean[window], eval_m[window])
-            RG_RMSE[window], RG_MAE[window] = masked_RG_RMSE_MAE(x_pred[window], x_clean[window], self.adjacency_matrix, avoid_m[window])
+                x_pred[-window] = self.predict(x[-window].unsqueeze(0), m[-window].unsqueeze(0))
+            RMSE[-window] = masked_RMSE(x_pred[-window], x_clean[-window], eval_m[-window])
+            MAE[-window] = masked_MAE(x_pred[-window], x_clean[-window], eval_m[-window])
+            RG_RMSE[-window], RG_MAE[-window] = masked_RG_RMSE_MAE(x_pred[-window], x_clean[-window], self.adjacency_matrix, avoid_m[-window])
 
         # reshape the prediction to the original shape 
         x_pred = einops.rearrange(x_pred, 'b w n 1 -> (b w) n')

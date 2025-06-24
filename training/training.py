@@ -13,7 +13,7 @@ from io import BytesIO
 from PIL import Image
 import cv2
 
-from trainer.custom_losses import masked_MSE, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, RG_loss, mixed_loss
+from training.custom_losses import masked_MSE, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, RG_loss, mixed_loss
 
 
 class Trainer():
@@ -51,6 +51,7 @@ class Trainer():
         y = batch.pop('y').float()
         eval_mask = batch.pop('eval_mask')
         mask = batch['mask']
+        avoid_mask = ((~mask)&(eval_mask))
 
         # compute prediction and loss
         y_hat, prediction = self.predict(batch)
@@ -60,7 +61,7 @@ class Trainer():
         
         # loss = self.loss(y_hat, y) # evaluate on all data (only with clean data)
         loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
-        # loss = self.train_loss(prediction, y, eval_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
+        # loss = self.train_loss(prediction, y, avoid_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
 
         # masking_proba = torch.sum(~eval_mask) / eval_mask.numel()
         # loss = loss / masking_proba # normalize the loss by the number of masked values

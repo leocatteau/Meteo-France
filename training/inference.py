@@ -21,6 +21,7 @@ class Filler():
         self.load_data()
 
         model_kwargs['seq_dim'] = self.original_data.shape[1]
+        model_kwargs['adj'] = self.adjacency_matrix
         self.model = model(**model_kwargs).to(self.device)
         self.load_model(args.model_path)
         self.mean_model = mean_fill(columnwise=True).to(self.device)

@@ -4,7 +4,7 @@ import sys
 sys.path.append('../..')
 
 ########################################################################
-from models.GRIN import GRINet
+from models.MLP import MLP
 from training.inference import Filler
 
 from types import SimpleNamespace
@@ -13,21 +13,19 @@ from types import SimpleNamespace
 def main():
     data_kwargs = SimpleNamespace()
     data_kwargs.root_path = '../../../datasets/'
-    data_kwargs.data_path = 'test_period.nc'
-    data_kwargs.corrupted_data_path = 'test_period_masked.nc'
-    data_kwargs.window = 24*1*1
-    data_kwargs.ideal = False
+    data_kwargs.data_path = 'bdclim_safran_2022-2024.nc'
+    data_kwargs.ideal = True
+
+    model_kwargs = dict(hidden_dim=64)
 
     filler_kwargs = SimpleNamespace()
-    filler_kwargs.mask_proba = 0.0
-    filler_kwargs.mask_length = 0
+    filler_kwargs.mask_proba = 0.5
+    filler_kwargs.mask_length = 24*7*3
     filler_kwargs.window = 24*1*1
-    filler_kwargs.overlap = True
-    filler_kwargs.model_path = '../../../results/mini_reconstruction/model/GRIN_diffusion.pt'
-    
-    model_kwargs = dict(d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=data_kwargs.window)
+    filler_kwargs.overlap = False
+    filler_kwargs.model_path = '../../../results/metric_MLP/model/MLP_diffusion.pt'
 
-    filler = Filler(data_kwargs, GRINet, model_kwargs, filler_kwargs)
+    filler = Filler(data_kwargs, MLP, model_kwargs, filler_kwargs)
     original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
 
     results = {
@@ -43,7 +41,7 @@ def main():
     }
 
     print("Reconstruction completed. Saving results...")
-    with open(f'../../../results/mini_reconstruction/data/reconstruction_diffusion_GRIN.json', 'w') as file:
+    with open(f'../../../results/metric_MLP/data/reconstruction_diffusion_MLP.json', 'w') as file:
         json.dump(results, file, indent=4)
     print("Reconstruction saved.")
 

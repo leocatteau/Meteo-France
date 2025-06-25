@@ -13,7 +13,7 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/noise_level_MLP/model/MLP_diffusion.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_MLP/model/MLP_diffusion.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
@@ -22,7 +22,7 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
     data_kwargs.batch_size = 15
-    data_kwargs.mask_length = 24*7*3
+    data_kwargs.mask_length = 24*3*1
     data_kwargs.mask_proba = masking_proba
     data_kwargs.window = 24*1*1
     data_kwargs.horizon = 0
@@ -50,7 +50,8 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
 def main(epochs = 100):
     # masking_probas = np.linspace(0.1, 0.9, num=epochs//5).tolist()
     # masking_probas = np.random.beta(1.3, 2.5, size=epochs).tolist()
-    masking_probas = np.random.uniform(0.05, 0.95, size=epochs).tolist()
+    masking_probas = np.random.uniform(0.05, 0.9, size=epochs).tolist()
+    # masking_probas = [0.5]
     # masking_probas = np.array(1-np.sqrt(1-np.random.uniform(0.05, 0.95, size=epochs))).tolist() # sample from 1-x
     train_losses = []
     test_losses = []
@@ -65,10 +66,10 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/noise_level_MLP/data/train_MLP_diffusion.json', 'w') as file:
+    with open('../../../results/metric_MLP/data/train_MLP_diffusion.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    epochs = 100
+    epochs = 100 
     main(epochs=epochs)
 

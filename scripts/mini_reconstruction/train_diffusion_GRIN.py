@@ -24,7 +24,7 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     data_kwargs.batch_size = 15
     data_kwargs.mask_length = 24*3*1
     data_kwargs.mask_proba = masking_proba
-    data_kwargs.window = 1*2*1
+    data_kwargs.window = 24*1*1
     data_kwargs.horizon = 0
 
     data_provider = DataProvider(data_kwargs)
@@ -35,7 +35,7 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     train_dataloader = data_provider.train_dataloader()
     test_dataloader = data_provider.test_dataloader()
 
-    model_kwargs = dict(adj=adjacency_matrix, d_in=1, global_att=True, d_hidden_spatial=8, d_hidden_temporal=data_kwargs.window)
+    model_kwargs = dict(adj=adjacency_matrix, d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=data_kwargs.window)
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 5e-4
     filler_kwargs.epochs = 1
@@ -75,6 +75,6 @@ def main(epochs = 100):
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    epochs = 2 
+    epochs = 100 
     main(epochs=epochs)
 

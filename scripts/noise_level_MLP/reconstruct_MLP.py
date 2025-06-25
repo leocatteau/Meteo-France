@@ -5,7 +5,7 @@ sys.path.append('../..')
 
 ########################################################################
 from models.MLP import MLP
-from trainer.Filler import Filler
+from training.training import Trainer
 
 from types import SimpleNamespace
 
@@ -25,7 +25,7 @@ def main(mask_proba = 0.5):
     filler_kwargs.window = 24*1*1
     filler_kwargs.model_path = '../../../results/noise_level_MLP/model/MLP_diffusion.pt'
 
-    filler = Filler(data_kwargs, MLP, model_kwargs, filler_kwargs)
+    filler = Trainer(data_kwargs, MLP, model_kwargs, filler_kwargs)
     corrupted_data, predictors, mask, eval_mask, reconstructed_data, loss = filler.reconstruct()
 
     results = {

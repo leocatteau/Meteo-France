@@ -7,6 +7,7 @@ import umap
 from sklearn.neighbors import kneighbors_graph
 
 from models.baseline import mean_fill
+from models.mean import identity
 from training.custom_losses import masked_MSE, masked_MAE, masked_RMSE, masked_RG_RMSE_MAE
 
 
@@ -20,10 +21,9 @@ class Filler():
         self.ideal = data_kwargs.ideal if hasattr(data_kwargs, 'ideal') else False
         self.load_data()
 
-        model_kwargs['seq_dim'] = self.original_data.shape[1]
+        # model_kwargs['seq_dim'] = self.original_data.shape[1]
         model_kwargs['adj'] = self.adjacency_matrix
         self.model = model(**model_kwargs).to(self.device)
-        self.load_model(args.model_path)
         self.mean_model = mean_fill(columnwise=True).to(self.device)
 
         self.mask_proba = args.mask_proba if hasattr(args, 'mask_proba') else 0.5
@@ -150,6 +150,7 @@ class Filler():
         return prediction
 
     def reconstruct(self):
+        self.model.eval()
         x_clean = self.original_data
         x = self.corrupted_data
         m = self.mask
@@ -170,7 +171,7 @@ class Filler():
         eval_m = einops.rearrange(eval_m, '(b w) n -> b w n 1', w=self.window_size)
         avoid_m = ((eval_m)^(~m))
 
-        x_pred = torch.zeros_like(x)
+        x_pred = torch.zeros_like(x).cpu()
         RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         RG_RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
@@ -178,9 +179,11 @@ class Filler():
         for window in range(x.shape[0]):
             print(f'Processing window {window+1}/{x.shape[0]}')
             if self.overlap:
-                x_pred[-window] = self.predict(torch.cat([x[-window+1], x[-window]], dim=0).unsqueeze(0), torch.cat([m[-window+1], m[-window]], dim=0).unsqueeze(0))[:,:self.window_size,:,:]
+                x_pred_gpu = self.predict(torch.cat([x[-window+1], x[-window]], dim=0).unsqueeze(0), torch.cat([m[-window+1], m[-window]], dim=0).unsqueeze(0))[:,:self.window_size,:,:]
+                x_pred[-window] = x_pred_gpu.cpu()
             else:
-                x_pred[-window] = self.predict(x[-window].unsqueeze(0), m[-window].unsqueeze(0))
+                x_pred_gpu= self.predict(x[-window].unsqueeze(0), m[-window].unsqueeze(0))
+                x_pred[-window] = x_pred_gpu.cpu()
             RMSE[-window] = masked_RMSE(x_pred[-window], x_clean[-window], eval_m[-window])
             MAE[-window] = masked_MAE(x_pred[-window], x_clean[-window], eval_m[-window])
             RG_RMSE[-window], RG_MAE[-window] = masked_RG_RMSE_MAE(x_pred[-window], x_clean[-window], self.adjacency_matrix, avoid_m[-window])

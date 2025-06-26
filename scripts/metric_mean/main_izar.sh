@@ -19,7 +19,7 @@
 # source .venv/bin/activate
 # cd Meteo-France/scripts
 
-# python3 -m train_diffusion_MLP
+# python3 -m train_diffusion_mean
 # python3 -m train_MLP
 
-python3 -m reconstruct_MLP 
+python3 -m reconstruct_mean 

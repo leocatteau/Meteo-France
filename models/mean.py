@@ -6,11 +6,15 @@ from utils.functions import torch_nan_to_num
 
 
 class identity(nn.Module):
-    def __init__(self):
+    def __init__(self, temporal=False):
         super(identity, self).__init__()
         self.model = nn.Identity()
+        self.temporal = temporal
 
     def forward(self, x, mask, **kwargs):
+        if self.temporal:
+            x = rearrange(x, 'b s n c -> b n s c')
+            mask = rearrange(mask, 'b s n c -> b n s c')
 
         imputations = []
         predictions = []

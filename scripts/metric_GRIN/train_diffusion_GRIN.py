@@ -13,12 +13,12 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/MLP_diffusion.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_GRIN/model/GRIN_diffusion.pt'):
     data_kwargs = SimpleNamespace()
-    data_kwargs.data = 'bdclim'
+    data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
     data_kwargs.root_path = '../../../datasets/'
-    data_kwargs.data_path = 'train_test_period_masked.nc'
+    data_kwargs.data_path = 'bdclim_safran_2022-2024.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
     data_kwargs.batch_size = 15
@@ -38,7 +38,6 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     filler_kwargs.lr = 5e-4
     filler_kwargs.epochs = 1
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
-    filler_kwargs.exogenous_vars = False
 
     filler = Trainer(GRINet, model_kwargs, filler_kwargs)
     if not first_pass:
@@ -69,7 +68,7 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/mini_reconstruction/data/train_GRIN_diffusion.json', 'w') as file:
+    with open('../../../results/metric_GRIN/data/train_GRIN_diffusion.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":

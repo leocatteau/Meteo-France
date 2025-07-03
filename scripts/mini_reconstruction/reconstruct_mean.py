@@ -6,6 +6,7 @@ sys.path.append('../..')
 
 ########################################################################
 from models.mean import identity
+from models.local_mean import local_mean
 from training.inference import Filler
 
 from types import SimpleNamespace
@@ -27,7 +28,7 @@ def main():
     filler_kwargs.overlap = False
     filler_kwargs.model_path = '../../../results/mini_reconstruction/model/mean_diffusion.pt'
 
-    filler = Filler(data_kwargs, identity, model_kwargs, filler_kwargs)
+    filler = Filler(data_kwargs, local_mean, model_kwargs, filler_kwargs)
     original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
 
     losses = {
@@ -38,23 +39,23 @@ def main():
     }
 
     print("Reconstruction completed. Saving results...")
-    with open(f'../../../results/mini_reconstruction/data/reconstruction_losses_mean.pkl', 'wb') as file:
+    with open(f'../../../results/mini_reconstruction/data/reconstruction_losses_local_mean.pkl', 'wb') as file:
         pickle.dump(losses, file)
     print("Reconstruction saved.")
 
-    with open(f'../../../results/mini_reconstruction/data/reconstructed_data_mean.pkl', 'wb') as file:
+    with open(f'../../../results/mini_reconstruction/data/reconstructed_data_local_mean.pkl', 'wb') as file:
         pickle.dump(reconstructed_data.tolist(), file)
 
-    with open(f'../../../results/mini_reconstruction/data/original_data_mean.pkl', 'wb') as file:
+    with open(f'../../../results/mini_reconstruction/data/original_data_local_mean.pkl', 'wb') as file:
         pickle.dump(original_data.tolist(), file)
 
-    with open(f'../../../results/mini_reconstruction/data/corrupted_data_mean.pkl', 'wb') as file:
+    with open(f'../../../results/mini_reconstruction/data/corrupted_data_local_mean.pkl', 'wb') as file:
         pickle.dump(corrupted_data.tolist(), file)
 
-    with open(f'../../../results/mini_reconstruction/data/predictors_mean.pkl', 'wb') as file:
-        pickle.dump(predictors.tolist(), file)
+    with open(f'../../../results/mini_reconstruction/data/predictors_local_mean.json', 'w') as file:
+        json.dump(predictors.to_json(), file)
 
-    with open(f'../../../results/mini_reconstruction/data/mask_mean.pkl', 'wb') as file:
+    with open(f'../../../results/mini_reconstruction/data/mask_local_mean.pkl', 'wb') as file:
         pickle.dump(mask.tolist(), file)
 
 if __name__ == "__main__":

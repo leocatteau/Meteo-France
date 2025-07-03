@@ -9,11 +9,12 @@ sys.path.append('../..')
 ########################################################################
 from data_provider.data_provider import DataProvider
 from models.mean import identity
+from models.local_mean import local_mean
 from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_MLP/model/MLP_diffusion.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_MLP/model/local_mean.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
@@ -30,14 +31,16 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     data_provider = DataProvider(data_kwargs)
     train_dataloader = data_provider.train_dataloader()
     test_dataloader = data_provider.test_dataloader()
+    adjacency_matrix, graph = data_provider.data.KNN_adjacency(threshold=0.0, verbose=False)
+    adjacency_matrix = torch.tensor(adjacency_matrix, dtype=torch.float32)
 
-    model_kwargs = dict()
+    model_kwargs = dict(num_clusters = 5, adj = adjacency_matrix)
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 5e-4
     filler_kwargs.epochs = 1
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
 
-    filler = Trainer(identity, model_kwargs, filler_kwargs)
+    filler = Trainer(local_mean, model_kwargs, filler_kwargs)
     if not first_pass:
         filler.load_model(model_path)
     train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
@@ -66,7 +69,7 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/metric_MLP/data/train_MLP_diffusion.json', 'w') as file:
+    with open('../../../results/metric_MLP/data/train_local_mean_diffusion.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":

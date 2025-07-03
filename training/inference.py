@@ -23,6 +23,7 @@ class Filler():
 
         # model_kwargs['seq_dim'] = self.original_data.shape[1]
         model_kwargs['adj'] = self.adjacency_matrix
+        model_kwargs['predictors'] = self.predictors
         self.model = model(**model_kwargs).to(self.device)
         self.mean_model = mean_fill(columnwise=True).to(self.device)
 
@@ -54,7 +55,7 @@ class Filler():
         self.original_data = torch.tensor(self.original_data, dtype=torch.float32).to(self.device)
 
         # set exogenous variables (predictors) dataframe
-        self.predictors = dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel','lat','lon']).isel(time=0).to_dataframe().drop(columns='time')
+        self.predictors = dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel']).isel(time=0).to_dataframe().drop(columns='time')
         mask = (~np.isnan(dataset['t'].values)).astype('uint8')
         self.mask = mask
         self.mask = torch.tensor(self.mask, dtype=torch.bool)

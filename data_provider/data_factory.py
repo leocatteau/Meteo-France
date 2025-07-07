@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import torch
-import umap
-import umap.plot
+# import umap
+# import umap.plot
 import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.neighbors import kneighbors_graph
@@ -71,22 +71,22 @@ class bdclim:
 
         return corr_matrix.values
     
-    def umap_adjacency(self, threshold=0.1, verbose=False):
-        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
-        predictors = self.predictors.drop(columns='region')
-        reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
-        reducer.fit_transform(predictors.fillna(method='ffill'))
+    # def umap_adjacency(self, threshold=0.1, verbose=False):
+    #     predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+    #     predictors = self.predictors.drop(columns='region')
+    #     reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
+    #     reducer.fit_transform(predictors.fillna(method='ffill'))
 
-        adjacency_matrix = reducer.graph_.toarray()
-        adjacency_matrix[adjacency_matrix < threshold] = 0
-        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
+    #     adjacency_matrix = reducer.graph_.toarray()
+    #     adjacency_matrix[adjacency_matrix < threshold] = 0
+    #     adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
 
-        if verbose:
-            umap.plot.points(reducer, labels=self.predictors['region'])
-            umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer')
-            plt.title('Infered graph from predictors')
-            plt.show()
-        return adjacency_matrix
+    #     if verbose:
+    #         umap.plot.points(reducer, labels=self.predictors['region'])
+    #         umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer')
+    #         plt.title('Infered graph from predictors')
+    #         plt.show()
+    #     return adjacency_matrix
     
     def KNN_adjacency(self, threshold=0.1, verbose=False):
         predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
@@ -183,20 +183,20 @@ class bdclim_clean:
 
         return corr_matrix.values
     
-    def umap_adjacency(self, threshold=0.1, verbose=False):
-        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
-        predictors = self.predictors.drop(columns='region')
-        reducer = umap.UMAP(min_dist=1, n_neighbors=50, metric='euclidean')
-        reducer.fit_transform(predictors.fillna(method='ffill'))
+    # def umap_adjacency(self, threshold=0.1, verbose=False):
+    #     predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+    #     predictors = self.predictors.drop(columns='region')
+    #     reducer = umap.UMAP(min_dist=1, n_neighbors=50, metric='euclidean')
+    #     reducer.fit_transform(predictors.fillna(method='ffill'))
 
-        adjacency_matrix = reducer.graph_.toarray()
-        adjacency_matrix[adjacency_matrix < threshold] = 0
-        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
+    #     adjacency_matrix = reducer.graph_.toarray()
+    #     adjacency_matrix[adjacency_matrix < threshold] = 0
+    #     adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
 
-        if verbose:
-            umap.plot.points(reducer, labels=self.predictors['region'])
-            umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
-        return adjacency_matrix
+    #     if verbose:
+    #         umap.plot.points(reducer, labels=self.predictors['region'])
+    #         umap.plot.connectivity(reducer, show_points=True, edge_bundling='hammer', labels=region_to_number(self.predictors['region']))
+    #     return adjacency_matrix
     
     def KNN_adjacency(self, threshold=0.1, verbose=False):
         predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()

@@ -95,7 +95,7 @@ class GRIL(nn.Module):
                                               d_model=self.hidden_size_spatial,
                                               d_temporal=self.hidden_size_temporal,
                                               d_out=self.input_size,
-                                              support_len=2,
+                                              support_len=5,
                                               order=decoder_order,
                                               attention_block=global_att)
 
@@ -290,7 +290,7 @@ class GRINet(nn.Module):
                  d_hidden_spatial = 64,
                  d_hidden_temporal = 24,
                  d_ff = 64,
-                 ff_dropout = 0.,
+                 ff_dropout = 0.1,
                  n_layers=1,
                  kernel_size=2,
                  decoder_order=5,

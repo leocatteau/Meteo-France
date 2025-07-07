@@ -56,7 +56,7 @@ def spatial_laplacian_MSE(y_true, y_pred, mask, graph):
 
 def cluster_from_adjacency(adj_matrix, num_clusters):
     features = adj_matrix  
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42, n_init='auto')
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
     labels = kmeans.fit_predict(features)
     return labels
 

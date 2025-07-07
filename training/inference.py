@@ -3,7 +3,7 @@ import torch
 import xarray as xr
 import os
 import einops
-import umap
+# import umap
 from sklearn.neighbors import kneighbors_graph
 
 from models.baseline import mean_fill
@@ -23,7 +23,7 @@ class Filler():
 
         # model_kwargs['seq_dim'] = self.original_data.shape[1]
         model_kwargs['adj'] = self.adjacency_matrix
-        model_kwargs['predictors'] = self.predictors
+        # model_kwargs['predictors'] = self.predictors
         self.model = model(**model_kwargs).to(self.device)
         self.mean_model = mean_fill(columnwise=True).to(self.device)
 
@@ -33,6 +33,9 @@ class Filler():
 
         self.window_size = args.window
         self.overlap = args.overlap if hasattr(args, 'overlap') else False
+
+        self.mask = self.mask.to(self.device)
+        self.corrupted_data = self.corrupted_data.to(self.device)
 
         
     def load_data(self):
@@ -52,7 +55,7 @@ class Filler():
 
         # load original data
         self.original_data = dataset['t'].values
-        self.original_data = torch.tensor(self.original_data, dtype=torch.float32).to(self.device)
+        self.original_data = torch.tensor(self.original_data, dtype=torch.float32)
 
         # set exogenous variables (predictors) dataframe
         self.predictors = dataset.reset_coords().drop_vars(['t','Station_Name','reseau_poste_actuel']).isel(time=0).to_dataframe().drop(columns='time')
@@ -73,17 +76,17 @@ class Filler():
         corr_matrix = corr_matrix - np.diag(np.diag(corr_matrix))
         return corr_matrix.values
     
-    def umap_adjacency(self, threshold=0.1):
-        # select only labx lamby and ZS as predictors
-        predictors = self.predictors[['lambx', 'lamby', 'ZS']]
-        predictors = (predictors - predictors.mean()) / predictors.std()
-        reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
-        reducer.fit_transform(predictors.fillna(method='ffill'))
+    # def umap_adjacency(self, threshold=0.1):
+    #     # select only labx lamby and ZS as predictors
+    #     predictors = self.predictors[['lambx', 'lamby', 'ZS']]
+    #     predictors = (predictors - predictors.mean()) / predictors.std()
+    #     reducer = umap.UMAP(min_dist=0.5, n_neighbors=10, metric='euclidean')
+    #     reducer.fit_transform(predictors.fillna(method='ffill'))
 
-        adjacency_matrix = reducer.graph_.toarray()
-        adjacency_matrix[adjacency_matrix < threshold] = 0
-        adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
-        return adjacency_matrix
+    #     adjacency_matrix = reducer.graph_.toarray()
+    #     adjacency_matrix[adjacency_matrix < threshold] = 0
+    #     adjacency_matrix = adjacency_matrix - np.diag(np.diag(adjacency_matrix))
+    #     return adjacency_matrix
     
     def KNN_adjacency(self, threshold=0.1):
         # select only labx lamby and ZS as predictors
@@ -170,24 +173,31 @@ class Filler():
         x = einops.rearrange(x, '(b w) n -> b w n 1', w=self.window_size)
         m = einops.rearrange(m, '(b w) n -> b w n 1', w=self.window_size)
         eval_m = einops.rearrange(eval_m, '(b w) n -> b w n 1', w=self.window_size)
-        avoid_m = ((eval_m)^(~m))
+        avoid_m = ((eval_m)^(~m.cpu()))
 
         x_pred = torch.zeros_like(x).cpu()
         RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         RG_RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
         RG_MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
-        for window in range(x.shape[0]):
-            print(f'Processing window {window+1}/{x.shape[0]}')
-            if self.overlap:
-                x_pred_gpu = self.predict(torch.cat([x[-window+1], x[-window]], dim=0).unsqueeze(0), torch.cat([m[-window+1], m[-window]], dim=0).unsqueeze(0))[:,:self.window_size,:,:]
-                x_pred[-window] = x_pred_gpu.cpu()
-            else:
-                x_pred_gpu= self.predict(x[-window].unsqueeze(0), m[-window].unsqueeze(0))
-                x_pred[-window] = x_pred_gpu.cpu()
-            RMSE[-window] = masked_RMSE(x_pred[-window], x_clean[-window], eval_m[-window])
-            MAE[-window] = masked_MAE(x_pred[-window], x_clean[-window], eval_m[-window])
-            RG_RMSE[-window], RG_MAE[-window] = masked_RG_RMSE_MAE(x_pred[-window], x_clean[-window], self.adjacency_matrix, avoid_m[-window])
+        with torch.no_grad():
+            for window in range(x.shape[0]):
+                print(f'Processing window {window+1}/{x.shape[0]}')
+
+                if self.overlap:
+                    input_x = torch.cat([x[-window+1], x[-window]], dim=0).unsqueeze(0)
+                    input_m = torch.cat([m[-window+1], m[-window]], dim=0).unsqueeze(0)
+                    x_pred_gpu = self.predict(input_x, input_m)[:, :self.window_size, :, :]
+                else:
+                    input_x = x[-window].unsqueeze(0)
+                    input_m = m[-window].unsqueeze(0)
+                    x_pred_gpu = self.predict(input_x, input_m)
+
+                x_pred_cpu = x_pred_gpu.cpu()
+                x_pred[-window] = x_pred_cpu
+                RMSE[-window] = masked_RMSE(x_pred[-window], x_clean[-window], eval_m[-window])
+                MAE[-window] = masked_MAE(x_pred[-window], x_clean[-window], eval_m[-window])
+                RG_RMSE[-window], RG_MAE[-window] = masked_RG_RMSE_MAE(x_pred[-window], x_clean[-window], self.adjacency_matrix, avoid_m[-window])
 
         # reshape the prediction to the original shape 
         x_pred = einops.rearrange(x_pred, 'b w n 1 -> (b w) n')

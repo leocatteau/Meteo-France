@@ -25,7 +25,7 @@ def main():
     filler_kwargs.mask_length = 24*7*3
     filler_kwargs.window = 24*1*1
     filler_kwargs.overlap = False
-    filler_kwargs.model_path = '../../../results/metric_GRIN/model/GRIN_diffusion.pt'
+    filler_kwargs.model_path = '../../../results/metric_GRIN/model/GRIN_24h.pt'
 
     filler = Filler(data_kwargs, GRINet, model_kwargs, filler_kwargs)
     original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
@@ -53,6 +53,9 @@ def main():
 
     with open(f'../../../results/metric_GRIN/data/mask_GRIN.pkl', 'wb') as file:
         pickle.dump(mask.tolist(), file)
+
+    with open(f'../../../results/metric_GRIN/data/predictors.json', 'w') as file:
+        json.dump(predictors.to_json(), file)
 
     print("Reconstruction saved.")
 

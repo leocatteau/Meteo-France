@@ -176,10 +176,10 @@ class Filler():
         avoid_m = ((eval_m)^(~m.cpu()))
 
         x_pred = torch.zeros_like(x).cpu()
-        RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
-        MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
-        RG_RMSE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
-        RG_MAE = torch.zeros(x.shape[0], dtype=torch.float32, device=self.device)
+        RMSE = torch.zeros(x.shape[0], dtype=torch.float32, requires_grad=False)
+        MAE = torch.zeros(x.shape[0], dtype=torch.float32, requires_grad=False)
+        RG_RMSE = torch.zeros(x.shape[0], dtype=torch.float32, requires_grad=False)
+        RG_MAE = torch.zeros(x.shape[0], dtype=torch.float32, requires_grad=False)
         with torch.no_grad():
             for window in range(x.shape[0]):
                 print(f'Processing window {window+1}/{x.shape[0]}')

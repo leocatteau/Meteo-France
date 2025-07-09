@@ -1,12 +1,29 @@
 import torch 
 import numpy as np
 import networkx as nx
+import einops 
 
 from sklearn.cluster import KMeans
 
 def masked_MSE(y_true, y_pred, mask):
     # should the model be trained only to fitting holes? this reduces a lot the data available to learn the process
     mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2)
+    return mse
+
+def MTSI_mse(y_true, y_imp, y_pred, mask):
+    B, S, N, _ = y_true.shape
+    y_pred_0 = y_pred[0]
+    y_pred_1 = y_pred[1]
+    # y_pred_2 = y_pred[2]
+    # y_pred_3 = y_pred[3]
+    y_true = einops.rearrange(y_true, 'b s n 1 -> (b s) n')
+    y_imp = einops.rearrange(y_imp, 'b s n 1 -> (b s) n')
+    y_pred_0 = einops.rearrange(y_pred_0, 'b s n 1 -> (b s) n')
+    y_pred_1 = einops.rearrange(y_pred_1, 'b s n 1 -> (b s) n')
+    # y_pred_2 = einops.rearrange(y_pred_2, 'b s n 1 -> (b s) n')
+    # y_pred_3 = einops.rearrange(y_pred_3, 'b s n 1 -> (b s) n')
+    mask = einops.rearrange(mask, 'b s n 1 -> (b s) n')
+    mse = torch.mean((y_imp[mask]-y_true[mask])**2) + torch.mean((y_pred_0[mask]-y_true[mask])**2) + torch.mean((y_pred_1[mask]-y_true[mask])**2)# + torch.mean((y_pred_2[mask]-y_true[mask])**2) + torch.mean((y_pred_3[mask]-y_true[mask])**2)
     return mse
 
 def masked_RMSE(y_true, y_pred, mask):
@@ -32,10 +49,10 @@ def spatiotemporal_masked_MSE(y_true, y_pred, mask, spatial_weight=0.5):
     return spatiotemporal_mse
 
 def temporal_gradient_MSE(y_true, y_pred, mask):
-    grad_y_true = torch.gradient(y_true, dim=1)[0]
+    # grad_y_true = torch.gradient(y_true, dim=1)[0]
     grad_y_pred = torch.gradient(y_pred, dim=1)[0]
-    grad_mse = torch.mean((grad_y_true[~mask] - grad_y_pred[~mask]) ** 2)
-    # grad_mse = torch.mean(grad_y_pred[~mask] ** 2) # if we want to minimize gradients
+    # grad_mse = torch.mean((grad_y_true[~mask] - grad_y_pred[~mask]) ** 2)
+    grad_mse = torch.mean(grad_y_pred ** 2) # if we want to minimize gradients
     return grad_mse
 
 def spatial_graph_gradient_MSE(y_true, y_pred, mask, graph):
@@ -80,8 +97,10 @@ def scatter_mean(values, indices, num_clusters):
 
 def coarse_rmse(pred, target, cluster_labels):
     B, S, N, _ = pred.shape
-    pred_flat = pred.view(-1, N)  # [B*S, N]
-    target_flat = target.view(-1, N)
+    pred_flat = einops.rearrange(pred, 'b s n 1 -> (b s) n')
+    target_flat = einops.rearrange(target, 'b s n 1 -> (b s) n')
+    # pred_flat = pred.view(-1, N)  # [B*S, N]
+    # target_flat = target.view(-1, N)
 
     cluster_labels = torch.tensor(cluster_labels, device=pred.device)
     cluster_labels = cluster_labels.unsqueeze(0).expand(B * S, -1).reshape(-1)
@@ -97,8 +116,10 @@ def coarse_rmse(pred, target, cluster_labels):
 
 def coarse_mae(pred, target, cluster_labels):
     B, S, N, _ = pred.shape
-    pred_flat = pred.view(-1, N)  # [B*S, N]
-    target_flat = target.view(-1, N)
+    pred_flat = einops.rearrange(pred, 'b s n 1 -> (b s) n')
+    target_flat = einops.rearrange(target, 'b s n 1 -> (b s) n')
+    # pred_flat = pred.view(-1, N)  # [B*S, N]
+    # target_flat = target.view(-1, N)
 
     cluster_labels = torch.tensor(cluster_labels, device=pred.device)
     cluster_labels = cluster_labels.unsqueeze(0).expand(B * S, -1).reshape(-1)
@@ -114,22 +135,22 @@ def coarse_mae(pred, target, cluster_labels):
 
 def RG_loss(pred, target, adjacency_matrix):
     N = adjacency_matrix.shape[0]
-    scales = np.linspace(1, N // 2.5, num=5, dtype=int).tolist()
-    weights = [1.0 / len(scales)] * len(scales)
+    num_clusters = np.linspace(10, N, num=10, dtype=int)
+    weights = np.exp(-((num_clusters-30)**2)/(2*50))
 
     RMSE = 0.0
     MAE = 0.0
-    for scale, w in zip(scales, weights):
-        num_clusters = max(2, N // scale)
-        labels = cluster_from_adjacency(adjacency_matrix, num_clusters)
+    for num_cluster, w in zip(num_clusters, weights):
+        labels = cluster_from_adjacency(adjacency_matrix, num_cluster)
         RMSE += w * coarse_rmse(pred, target, labels)
         MAE += w * coarse_mae(pred, target, labels)
     return RMSE, MAE
 
 def masked_RG_RMSE_MAE(pred, target, adjacency_matrix, mask):
-    pred = pred.unsqueeze(0) # [1, S, N, C]
-    target = target.unsqueeze(0) # [1, S, N, C]
-    mask = mask.unsqueeze(0) # [1, S, N, C]
+    if len(pred.shape)==3:
+        pred = pred.unsqueeze(0) # [1, S, N, C]
+        target = target.unsqueeze(0) # [1, S, N, C]
+        mask = mask.unsqueeze(0) # [1, S, N, C]
     pred[~mask] = np.nan
     RMSE, MAE = RG_loss(pred, target, adjacency_matrix)
     return RMSE, MAE
@@ -140,3 +161,11 @@ def mixed_loss(y_true, y_pred, mask, spatial_weight=0.5, eta=0.1, graph=None):
     # grad_mse = temporal_gradient_MSE(y_true, y_pred, mask)
     laplacian_mse = spatial_laplacian_MSE(y_true, y_pred, mask, graph=graph)
     return spatiotemporal_mse + eta * laplacian_mse
+
+def composite_loss(y_true, y_pred, adjacency_matrix, mask_MSE, mask_RG):
+    masked_mse = masked_MSE(y_true, y_pred, mask_MSE)
+    # masked_RG_mse, _ = masked_RG_RMSE_MAE(y_pred, y_true, adjacency_matrix, mask_RG)
+    temporal_gradient_mse = temporal_gradient_MSE(y_true, y_pred, mask_RG)
+    # loss = 0.7*masked_mse + 0.2*masked_RG_mse + 0.1*temporal_gradient_mse
+    loss = 0.9*masked_mse + 0.1*temporal_gradient_mse
+    return loss

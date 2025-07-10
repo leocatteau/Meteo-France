@@ -55,6 +55,20 @@ def temporal_gradient_MSE(y_true, y_pred, mask):
     grad_mse = torch.mean(grad_y_pred ** 2) # if we want to minimize gradients
     return grad_mse
 
+def temporal_gradient_RMSE(y_true, y_pred, mask):
+    # grad_y_true = torch.gradient(y_true, dim=1)[0]
+    grad_y_pred = torch.gradient(y_pred, dim=1)[0]
+    # grad_mse = torch.mean((grad_y_true[~mask] - grad_y_pred[~mask]) ** 2)
+    grad_mse = torch.sqrt(torch.mean(grad_y_pred ** 2)) # if we want to minimize gradients
+    return grad_mse
+
+def temporal_gradient_MAE(y_true, y_pred, mask):
+    # grad_y_true = torch.gradient(y_true, dim=1)[0]
+    grad_y_pred = torch.gradient(y_pred, dim=1)[0]
+    # grad_mse = torch.mean((grad_y_true[~mask] - grad_y_pred[~mask]) ** 2)
+    grad_mse = torch.mean(torch.abs(grad_y_pred)) # if we want to minimize gradients
+    return grad_mse
+
 def spatial_graph_gradient_MSE(y_true, y_pred, mask, graph):
     loss = 0 
     for i, j in graph.edges():

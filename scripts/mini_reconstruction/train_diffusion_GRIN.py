@@ -13,7 +13,7 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/MLP_diffusion.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim'
     data_kwargs.dataset = 'WindowHorizonDataset'
@@ -22,7 +22,7 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
     data_kwargs.batch_size = 15
-    data_kwargs.mask_length = 24*3*1
+    data_kwargs.mask_length = 24*7*1
     data_kwargs.mask_proba = masking_proba
     data_kwargs.window = 24*1*1
     data_kwargs.horizon = 0
@@ -33,9 +33,9 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     adjacency_matrix, graph = data_provider.data.KNN_adjacency(threshold=0.0, verbose=False)
     adjacency_matrix = torch.tensor(adjacency_matrix, dtype=torch.float32)
 
-    model_kwargs = dict(adj=adjacency_matrix, d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=data_kwargs.window)
+    model_kwargs = dict(adj=adjacency_matrix, d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=24, d_emb=1,merge='mlp')
     filler_kwargs = SimpleNamespace()
-    filler_kwargs.lr = 5e-4
+    filler_kwargs.lr = 1e-4
     filler_kwargs.epochs = 1
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
     filler_kwargs.exogenous_vars = False
@@ -69,10 +69,10 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/mini_reconstruction/data/train_GRIN_diffusion.json', 'w') as file:
+    with open('../../../results/mini_reconstruction/data/train_GRIN_24h_attn_impute_mlp_grad01.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    epochs = 100 
+    epochs = 50
     main(epochs=epochs)
 

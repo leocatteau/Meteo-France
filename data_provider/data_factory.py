@@ -89,8 +89,12 @@ class bdclim:
     #     return adjacency_matrix
     
     def KNN_adjacency(self, threshold=0.1, verbose=False):
-        predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
-        predictors = self.predictors.drop(columns='region')
+        # predictors = (self.predictors.drop(columns='region') - self.predictors.drop(columns='region').mean()) / self.predictors.drop(columns='region').std()
+        # predictors = self.predictors.drop(columns='region')
+
+        # predictors = self.predictors[['lambx', 'lamby', 'ZS']]
+        predictors = self.predictors[['lambx', 'lamby', 'ZS', 'TCD_500m', 'TPI_30m', 'aspect_30m', 'slope_30m', 'slope_500m', 'aspect_500m', 'TPI_1000m']]
+        predictors = (predictors - predictors.mean()) / predictors.std()
 
         adjacency_matrix = kneighbors_graph(predictors.fillna(method='ffill'), n_neighbors=10, mode='connectivity', include_self=False).toarray()
         adjacency_matrix[adjacency_matrix < threshold] = 0

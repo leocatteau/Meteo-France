@@ -74,6 +74,8 @@ class Trainer():
         self.optimizer.zero_grad()
         loss.backward()  
         self.optimizer.step()
+        self.optimizer.zero_grad(set_to_none=True)
+        torch.cuda.empty_cache()
 
         loss = self.loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
         return loss.item()
@@ -94,6 +96,8 @@ class Trainer():
         start_time = time.time()
         print(f"start training")
 
+        scaler = torch.cuda.amp.GradScaler()
+
         train_losses = []
         test_losses = []
         for epoch in range(self.epochs):
@@ -102,6 +106,7 @@ class Trainer():
             for batch in train_dataloader:
                 #batch = {k: v.to(device) for k, v in batch.items()}
                 loss = self.training_step(batch)
+
                 train_loss += loss
             train_loss /= len(train_dataloader)
             train_losses.append(train_loss)

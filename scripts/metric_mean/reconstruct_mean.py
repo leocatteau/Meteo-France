@@ -21,20 +21,24 @@ def main():
     model_kwargs = dict()
 
     filler_kwargs = SimpleNamespace()
-    filler_kwargs.mask_proba = 0.995
+    filler_kwargs.mask_proba = 0.9
     filler_kwargs.mask_length = 24*7*3
     filler_kwargs.window = 24*1*1
     filler_kwargs.overlap = False
 
     filler = Filler(data_kwargs, local_mean, model_kwargs, filler_kwargs)
-    original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
+    original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE, GRAD_RMSE, GRAD_MAE = filler.reconstruct()
 
     losses = {
-        'RMSE': RMSE.tolist(),
-        'MAE': MAE.tolist(),
-        'RG_RMSE': RG_RMSE.tolist(),
-        'RG_MAE': RG_MAE.tolist(),
+        'RMSE': RMSE,
+        'MAE': MAE,
+        'RG_RMSE': RG_RMSE,
+        'RG_MAE': RG_MAE,
+        'GRAD_RMSE': GRAD_RMSE,
+        'GRAD_MAE': GRAD_MAE
     }
+
+    print(f'RG RMSE:{RG_RMSE}')
 
     print("Reconstruction completed. Saving results...")
     with open(f'../../../results/metric_mean/data/reconstruction_losses_local_mean.pkl', 'wb') as file:

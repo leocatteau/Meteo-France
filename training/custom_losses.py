@@ -150,7 +150,8 @@ def coarse_mae(pred, target, cluster_labels):
 def RG_loss(pred, target, adjacency_matrix):
     N = adjacency_matrix.shape[0]
     num_clusters = np.linspace(10, N, num=10, dtype=int)
-    weights = np.exp(-((num_clusters-30)**2)/(2*50))
+    weights = np.exp(-((num_clusters-30)**2)/(2*50)) # gaussian weighting
+    weights = np.ones(len(num_clusters))/len(num_clusters)
 
     RMSE = 0.0
     MAE = 0.0

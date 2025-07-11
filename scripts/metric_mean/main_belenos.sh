@@ -3,7 +3,7 @@
 #SBATCH --error=error.err
 #SBATCH --job-name=imputation
 #SBATCH --partition=ndl
-#SBATCH --time=0:10:00
+#SBATCH --time=0:05:00
 
 # Load all modules
 module load gcc
@@ -21,5 +21,5 @@ data_path="/scratch/work/catteaul/datasets/"
 #srun python experiments_main.py
 # srun python -m train_diffusion_GRIN
 # srun python -m train_GRIN $data_path
-srun python -m reconstruct_GRIN
+srun python -m reconstruct_mean
 # srun python -m hallucination_GRIN

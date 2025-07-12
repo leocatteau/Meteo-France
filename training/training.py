@@ -32,7 +32,7 @@ class Trainer():
         self.keep_proba = args.keep_proba
         # self.spatial_weight = args.spatial_weight
         self.exogenous_vars = args.exogenous_vars if hasattr(args, 'exogenous_vars') else False
-        self.adjacency_matrix = model_kwargs['adj'] 
+        # self.adjacency_matrix = model_kwargs['adj'] 
 
     def predict(self, batch):
         # include the preprocess 
@@ -66,7 +66,7 @@ class Trainer():
         # loss = self.train_loss(x, y_hat, prediction, mask) # MTSI
         # loss = self.train_loss(y_hat, y, eval_mask) # evaluate on the artificial mask only
         # loss = self.train_loss(prediction, y, avoid_mask) # train the model to predict all the signal (avoiding the original mask), fonctopnne très mal en test sur la tâche réellement attendue
-        loss = self.train_loss(y_hat, y, self.adjacency_matrix, eval_mask, avoid_mask) # composite loss
+        loss = self.train_loss(y_hat, y, eval_mask, avoid_mask) # composite loss
 
         # masking_proba = torch.sum(~eval_mask) / eval_mask.numel()
         # loss = loss / masking_proba # normalize the loss by the number of masked values

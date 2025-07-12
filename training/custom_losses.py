@@ -150,7 +150,7 @@ def coarse_mae(pred, target, cluster_labels):
 def RG_loss(pred, target, adjacency_matrix):
     N = adjacency_matrix.shape[0]
     num_clusters = np.linspace(10, N, num=10, dtype=int)
-    weights = np.exp(-((num_clusters-30)**2)/(2*50)) # gaussian weighting
+    # weights = np.exp(-((num_clusters-30)**2)/(2*50)) # gaussian weighting
     weights = np.ones(len(num_clusters))/len(num_clusters)
 
     RMSE = 0.0
@@ -177,7 +177,7 @@ def mixed_loss(y_true, y_pred, mask, spatial_weight=0.5, eta=0.1, graph=None):
     laplacian_mse = spatial_laplacian_MSE(y_true, y_pred, mask, graph=graph)
     return spatiotemporal_mse + eta * laplacian_mse
 
-def composite_loss(y_true, y_pred, adjacency_matrix, mask_MSE, mask_RG):
+def composite_loss(y_true, y_pred, mask_MSE, mask_RG):
     masked_mse = masked_MSE(y_true, y_pred, mask_MSE)
     # masked_RG_mse, _ = masked_RG_RMSE_MAE(y_pred, y_true, adjacency_matrix, mask_RG)
     temporal_gradient_mse = temporal_gradient_MSE(y_true, y_pred, mask_RG)

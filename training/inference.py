@@ -92,7 +92,9 @@ class Filler():
     
     def KNN_adjacency(self, threshold=0.1):
         # select only labx lamby and ZS as predictors
-        predictors = self.predictors[['lambx', 'lamby', 'ZS']]
+        # predictors = self.predictors[['lambx', 'lamby', 'ZS']]
+        # predictors = (predictors - predictors.mean()) / predictors.std()
+        predictors = self.predictors[['lambx', 'lamby', 'ZS', 'TCD_500m', 'TPI_30m', 'aspect_30m', 'slope_30m', 'slope_500m', 'aspect_500m', 'TPI_1000m']]
         predictors = (predictors - predictors.mean()) / predictors.std()
 
         adjacency_matrix = kneighbors_graph(predictors.fillna(method='ffill'), n_neighbors=10, mode='connectivity', include_self=False).toarray()
@@ -204,106 +206,107 @@ class Filler():
 
     #     return self.original_data, self.corrupted_data, self.predictors, self.mask, self.eval_mask, self.reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE
 
-    def reconstruct(self):
-        self.model.eval()
-        valid_length = self.corrupted_data.shape[0] - self.corrupted_data.shape[0] % self.window_size
-        original_data = self.original_data[-valid_length:]
-        corrupted_data = self.corrupted_data[-valid_length:]
-        mask_tensor = self.mask[-valid_length:]
-        evaluation_mask = self.eval_mask[-valid_length:]
-
-        batch_count = valid_length // self.window_size
-        input_data = einops.rearrange(corrupted_data, '(b w) n -> b w n 1', b=batch_count, w=self.window_size)
-        input_mask = einops.rearrange(mask_tensor, '(b w) n -> b w n 1', b=batch_count, w=self.window_size)
-
-        with torch.no_grad():
-            prediction_gpu = self.predict(input_data, input_mask)
-        prediction = einops.rearrange(prediction_gpu, 'b w n 1 -> (b w) n 1').cpu()
-        original_data = einops.rearrange(original_data, 'w n -> w n 1').cpu()
-        evaluation_mask = einops.rearrange(evaluation_mask, 'w n -> w n 1').cpu()
-        mask_tensor = einops.rearrange(mask_tensor, 'w n -> w n 1').cpu()
-
-        rmse_value = masked_RMSE(prediction, original_data.cpu(), evaluation_mask.cpu())
-        mae_value = masked_MAE(prediction, original_data.cpu(), evaluation_mask.cpu())
-        rg_rmse_value, rg_mae_value = masked_RG_RMSE_MAE(prediction, original_data.cpu(), self.adjacency_matrix, (~evaluation_mask | mask_tensor.cpu()))
-        rmse_grad = temporal_gradient_RMSE(original_data, prediction, evaluation_mask)
-        mae_grad = temporal_gradient_MAE(original_data, prediction, evaluation_mask)
-
-        prediction = einops.rearrange(prediction, 'w n 1 -> w n')
-        original_data = einops.rearrange(original_data, 'w n 1 -> w n').cpu()
-        evaluation_mask = einops.rearrange(evaluation_mask, 'w n 1 -> w n').cpu()
-        mask_tensor = einops.rearrange(mask_tensor, 'w n 1 -> w n').cpu()
-
-        self.reconstructed_data = prediction.numpy()
-        return original_data.cpu().numpy(), corrupted_data.cpu().numpy(), mask_tensor.cpu().numpy(), evaluation_mask.cpu().numpy(), self.reconstructed_data, rmse_value.item(), mae_value.item(), rg_rmse_value.item(), rg_mae_value.item(), rmse_grad.item(), rmse_grad.item()
-
     # def reconstruct(self):
     #     self.model.eval()
-    #     stride_size = self.window_size - self.overlap
-    #     sequence_length = self.corrupted_data.shape[0]
-    #     usable_length = sequence_length - ((sequence_length - self.window_size) % stride_size)
-    #     original_data = self.original_data[:usable_length]
-    #     reconstruction_gpu = self.corrupted_data[:usable_length].clone()
-    #     mask_gpu = self.mask[:usable_length].clone()
-    #     evaluation_mask = self.eval_mask[:usable_length]
+    #     valid_length = self.corrupted_data.shape[0] - self.corrupted_data.shape[0] % self.window_size
+    #     original_data = self.original_data[-valid_length:]
+    #     corrupted_data = self.corrupted_data[-valid_length:]
+    #     mask_tensor = self.mask[-valid_length:]
+    #     evaluation_mask = self.eval_mask[-valid_length:]
 
-    #     for start_index in range(0, usable_length - self.window_size + 1, stride_size):
-    #         end_index = start_index + self.window_size
-    #         print(f'Processing window [{start_index},{end_index}] of {usable_length} indices')
-    #         input_data = reconstruction_gpu[start_index:end_index].unsqueeze(-1).unsqueeze(0)
-    #         input_mask = mask_gpu[start_index:end_index].unsqueeze(-1).unsqueeze(0)
-    #         with torch.no_grad():
-    #             prediction_window_gpu = self.predict(input_data, input_mask).squeeze(-1).squeeze(0)
-    #         unfilled_gpu = ~mask_gpu[start_index:end_index]
-    #         reconstruction_gpu[start_index:end_index][unfilled_gpu] = prediction_window_gpu[unfilled_gpu]
-    #         mask_gpu[start_index:end_index][unfilled_gpu] = True
+    #     batch_count = valid_length // self.window_size
+    #     input_data = einops.rearrange(corrupted_data, '(b w) n -> b w n 1', b=batch_count, w=self.window_size)
+    #     input_mask = einops.rearrange(mask_tensor, '(b w) n -> b w n 1', b=batch_count, w=self.window_size)
 
-    #     reconstruction_cpu = einops.rearrange(reconstruction_gpu, 'w n -> w n 1').cpu()
+    #     with torch.no_grad():
+    #         prediction_gpu = self.predict(input_data, input_mask)
+    #     prediction = einops.rearrange(prediction_gpu, 'b w n 1 -> (b w) n 1').cpu()
     #     original_data = einops.rearrange(original_data, 'w n -> w n 1').cpu()
     #     evaluation_mask = einops.rearrange(evaluation_mask, 'w n -> w n 1').cpu()
-    #     mask = einops.rearrange(mask_gpu, 'w n -> w n 1').cpu()
+    #     mask_tensor = einops.rearrange(mask_tensor, 'w n -> w n 1').cpu()
 
-    #     rmse_value = masked_RMSE(reconstruction_cpu, original_data, evaluation_mask)
-    #     mae_value = masked_MAE(reconstruction_cpu, original_data, evaluation_mask)
-    #     rmse_grad = temporal_gradient_RMSE(original_data, reconstruction_cpu, evaluation_mask)
-    #     mae_grad = temporal_gradient_MAE(original_data, reconstruction_cpu, evaluation_mask)
+    #     rmse_value = masked_RMSE(prediction, original_data.cpu(), evaluation_mask.cpu())
+    #     mae_value = masked_MAE(prediction, original_data.cpu(), evaluation_mask.cpu())
+    #     rg_rmse_value, rg_mae_value = masked_RG_RMSE_MAE(prediction, original_data.cpu(), self.adjacency_matrix, (~evaluation_mask | mask_tensor.cpu()))
+    #     rmse_grad = temporal_gradient_RMSE(original_data, prediction, evaluation_mask)
+    #     mae_grad = temporal_gradient_MAE(original_data, prediction, evaluation_mask)
 
-    #     rg_rmse_value, rg_mae_value = masked_RG_RMSE_MAE(
-    #         reconstruction_cpu,
-    #         original_data,
-    #         self.adjacency_matrix,
-    #         (~evaluation_mask | mask),
-    #     )
-
-    #     reconstruction_cpu = einops.rearrange(reconstruction_cpu, 'w n 1 -> w n')
+    #     prediction = einops.rearrange(prediction, 'w n 1 -> w n')
     #     original_data = einops.rearrange(original_data, 'w n 1 -> w n').cpu()
     #     evaluation_mask = einops.rearrange(evaluation_mask, 'w n 1 -> w n').cpu()
-    #     mask = einops.rearrange(mask, 'w n 1 -> w n').cpu()
+    #     mask_tensor = einops.rearrange(mask_tensor, 'w n 1 -> w n').cpu()
 
-    #     print(rmse_value.item())
-    #     print(mae_value.item())
-    #     print(rg_rmse_value.item())
-    #     print(rg_mae_value.item())
-    #     print(rmse_grad.item())
-    #     print(mae_grad.item())
+    #     self.reconstructed_data = prediction.numpy()
+    #     return original_data.cpu().numpy(), corrupted_data.cpu().numpy(), mask_tensor.cpu().numpy(), evaluation_mask.cpu().numpy(), self.reconstructed_data, rmse_value.item(), mae_value.item(), rg_rmse_value.item(), rg_mae_value.item(), rmse_grad.item(), rmse_grad.item()
 
-    #     print(original_data.shape)
-    #     print(self.corrupted_data[:usable_length].shape)
-    #     print(evaluation_mask.shape)
-    #     print(reconstruction_cpu.shape)
-    #     print(mask.shape)
-    #     print(original_data.shape)
+    def reconstruct(self):
+        self.model.eval()
+        stride_size = self.window_size - self.overlap
+        sequence_length = self.corrupted_data.shape[0]
+        usable_length = sequence_length - ((sequence_length - self.window_size) % stride_size)
+        original_data = self.original_data[:usable_length]
+        reconstruction_gpu = self.corrupted_data[:usable_length].clone()
+        mask_gpu = self.mask[:usable_length].clone()
+        evaluation_mask = self.eval_mask[:usable_length]
 
-    #     return (
-    #         original_data.numpy(),
-    #         self.corrupted_data[:usable_length].cpu().numpy(),
-    #         mask.numpy(),
-    #         evaluation_mask.numpy(),
-    #         reconstruction_cpu.numpy(),
-    #         rmse_value.item(),
-    #         mae_value.item(),
-    #         rg_rmse_value.item(),
-    #         rg_mae_value.item(),
-    #         rmse_grad.item(),
-    #         mae_grad.item()
-    #     )
+        last_start = usable_length - self.window_size
+        for start_index in range(last_start, -1, -stride_size):
+            end_index = start_index + self.window_size
+            print(f'Processing window [{start_index},{end_index}] of {usable_length} indices')
+            input_data = reconstruction_gpu[start_index:end_index].unsqueeze(-1).unsqueeze(0)
+            input_mask = mask_gpu[start_index:end_index].unsqueeze(-1).unsqueeze(0)
+            with torch.no_grad():
+                prediction_window_gpu = self.predict(input_data, input_mask).squeeze(-1).squeeze(0)
+            unfilled_gpu = ~mask_gpu[start_index:end_index]
+            reconstruction_gpu[start_index:end_index][unfilled_gpu] = prediction_window_gpu[unfilled_gpu]
+            mask_gpu[start_index:end_index][unfilled_gpu] = True
+
+        reconstruction_cpu = einops.rearrange(reconstruction_gpu, 'w n -> w n 1').cpu()
+        original_data = einops.rearrange(original_data, 'w n -> w n 1').cpu()
+        evaluation_mask = einops.rearrange(evaluation_mask, 'w n -> w n 1').cpu()
+        mask = einops.rearrange(mask_gpu, 'w n -> w n 1').cpu()
+
+        rmse_value = masked_RMSE(reconstruction_cpu, original_data, evaluation_mask)
+        mae_value = masked_MAE(reconstruction_cpu, original_data, evaluation_mask)
+        rmse_grad = temporal_gradient_RMSE(original_data, reconstruction_cpu, evaluation_mask)
+        mae_grad = temporal_gradient_MAE(original_data, reconstruction_cpu, evaluation_mask)
+
+        rg_rmse_value, rg_mae_value = masked_RG_RMSE_MAE(
+            reconstruction_cpu,
+            original_data,
+            self.adjacency_matrix,
+            (~evaluation_mask | mask),
+        )
+
+        reconstruction_cpu = einops.rearrange(reconstruction_cpu, 'w n 1 -> w n')
+        original_data = einops.rearrange(original_data, 'w n 1 -> w n').cpu()
+        evaluation_mask = einops.rearrange(evaluation_mask, 'w n 1 -> w n').cpu()
+        mask = einops.rearrange(mask, 'w n 1 -> w n').cpu()
+
+        print(rmse_value.item())
+        print(mae_value.item())
+        print(rg_rmse_value.item())
+        print(rg_mae_value.item())
+        print(rmse_grad.item())
+        print(mae_grad.item())
+
+        print(original_data.shape)
+        print(self.corrupted_data[:usable_length].shape)
+        print(evaluation_mask.shape)
+        print(reconstruction_cpu.shape)
+        print(mask.shape)
+        print(original_data.shape)
+
+        return (
+            original_data.numpy(),
+            self.corrupted_data[:usable_length].cpu().numpy(),
+            mask.numpy(),
+            evaluation_mask.numpy(),
+            reconstruction_cpu.numpy(),
+            rmse_value.item(),
+            mae_value.item(),
+            rg_rmse_value.item(),
+            rg_mae_value.item(),
+            rmse_grad.item(),
+            mae_grad.item()
+        )

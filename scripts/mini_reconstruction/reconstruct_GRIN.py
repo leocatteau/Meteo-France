@@ -1,4 +1,5 @@
 import json
+import pickle
 
 import sys
 sys.path.append('../..')
@@ -10,7 +11,7 @@ from training.inference import Filler
 from types import SimpleNamespace
 
 
-def main():
+def main(): 
     data_kwargs = SimpleNamespace()
     data_kwargs.root_path = '../../../datasets/'
     data_kwargs.data_path = 'test_period.nc'
@@ -18,35 +19,51 @@ def main():
     data_kwargs.window = 24*1*1
     data_kwargs.ideal = False
 
+    model_kwargs = dict(d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=24, d_emb=1,merge='mlp')
+    
     filler_kwargs = SimpleNamespace()
     filler_kwargs.mask_proba = 0.0
     filler_kwargs.mask_length = 0
     filler_kwargs.window = 24*1*1
-    filler_kwargs.overlap = True
-    filler_kwargs.model_path = '../../../results/mini_reconstruction/model/GRIN_diffusion.pt'
+    filler_kwargs.overlap = 0
+    filler_kwargs.model_path = '../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01.pt'
     
-    model_kwargs = dict(d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=data_kwargs.window)
-
     filler = Filler(data_kwargs, GRINet, model_kwargs, filler_kwargs)
-    original_data, corrupted_data, predictors, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE = filler.reconstruct()
+    original_data, corrupted_data, mask, eval_mask, reconstructed_data, RMSE, MAE, RG_RMSE, RG_MAE, GRAD_RMSE, GRAD_MAE= filler.reconstruct()
 
-    results = {
-        'original_data': original_data.tolist(),
-        'corrupted_data': corrupted_data.tolist(),
-        'predictors': predictors.to_json(),
-        'mask': mask.tolist(),
-        'reconstructed_data': reconstructed_data.tolist(),
-        'RMSE': RMSE.tolist(),
-        'MAE': MAE.tolist(),
-        'RG_RMSE': RG_RMSE.tolist(),
-        'RG_MAE': RG_MAE.tolist(),
+    losses = {
+        'RMSE': RMSE,
+        'MAE': MAE,
+        'RG_RMSE': RG_RMSE,
+        'RG_MAE': RG_MAE,
+        'GRAD_RMSE': GRAD_RMSE,
+        'GRAD_MAE': GRAD_MAE
     }
 
     print("Reconstruction completed. Saving results...")
-    with open(f'../../../results/mini_reconstruction/data/reconstruction_diffusion_GRIN.json', 'w') as file:
-        json.dump(results, file, indent=4)
+    with open(f'../../../results/mini_reconstruction/data/reconstruction_losses_GRIN.pkl', 'wb') as file:
+        pickle.dump(losses, file)
+    print("Reconstruction saved.")
+
+    with open(f'../../../results/mini_reconstruction/data/reconstructed_data_GRIN.pkl', 'wb') as file:
+        pickle.dump(reconstructed_data.tolist(), file)
+
+    with open(f'../../../results/mini_reconstruction/data/original_data_GRIN.pkl', 'wb') as file:
+        pickle.dump(original_data.tolist(), file)
+
+    with open(f'../../../results/mini_reconstruction/data/corrupted_data_GRIN.pkl', 'wb') as file:
+        pickle.dump(corrupted_data.tolist(), file)
+
+    with open(f'../../../results/mini_reconstruction/data/mask_GRIN.pkl', 'wb') as file:
+        pickle.dump(mask.tolist(), file)
+
+    # with open(f'../../../results/metric_GRIN/data/predictors_overlap.json', 'w') as file:
+    #     json.dump(predictors.to_json(), file)
+
     print("Reconstruction saved.")
 
 if __name__ == "__main__":
     main()
+
+
 

@@ -1,0 +1,1050 @@
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.76511378, Test Loss: 3.40869709, time: 147.41s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 3.02203250, Test Loss: 4.35461640, time: 145.64s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.88199213, Test Loss: 3.78662874, time: 145.77s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.79848605, Test Loss: 3.53735102, time: 145.71s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.62834788, Test Loss: 3.09062988, time: 145.64s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.63147357, Test Loss: 3.27629716, time: 145.29s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.57505822, Test Loss: 3.10644379, time: 145.14s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.94354581, Test Loss: 3.91823414, time: 144.51s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.75726976, Test Loss: 3.44357669, time: 144.62s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.80227829, Test Loss: 3.63664223, time: 145.06s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.57674672, Test Loss: 3.11141905, time: 146.23s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.92579936, Test Loss: 3.78632902, time: 145.07s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.84482815, Test Loss: 3.56020133, time: 146.92s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.59206196, Test Loss: 3.02351120, time: 145.89s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.58244154, Test Loss: 3.22209211, time: 145.23s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.54918417, Test Loss: 3.16652557, time: 145.63s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.60982036, Test Loss: 3.25664004, time: 146.06s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.66695811, Test Loss: 3.43359447, time: 145.13s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.62143566, Test Loss: 3.15091460, time: 143.68s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.55639790, Test Loss: 3.10882876, time: 144.94s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.66317065, Test Loss: 3.66184834, time: 145.21s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.51468473, Test Loss: 2.88553822, time: 146.32s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.54309702, Test Loss: 3.12062809, time: 144.90s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.58799120, Test Loss: 3.22730246, time: 145.28s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.58056073, Test Loss: 3.29629069, time: 145.40s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.73623498, Test Loss: 3.64136163, time: 144.92s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.48387263, Test Loss: 3.13971097, time: 145.38s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.59166894, Test Loss: 3.26084221, time: 143.94s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.61607176, Test Loss: 3.25399446, time: 144.54s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.39956558, Test Loss: 2.94596440, time: 144.52s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.60697741, Test Loss: 3.21343164, time: 144.41s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.45799154, Test Loss: 2.99800255, time: 144.70s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.39201226, Test Loss: 3.03129606, time: 147.21s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.76384254, Test Loss: 3.71035257, time: 146.40s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.75629878, Test Loss: 3.67746099, time: 146.95s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.66172300, Test Loss: 3.40193706, time: 145.85s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.46248096, Test Loss: 3.00174883, time: 145.78s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.40924238, Test Loss: 2.93750558, time: 146.04s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.59422709, Test Loss: 3.49000022, time: 145.61s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.48208450, Test Loss: 2.99897265, time: 146.23s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.38215582, Test Loss: 3.06644058, time: 146.37s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.48631478, Test Loss: 3.21656202, time: 147.39s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.35506030, Test Loss: 2.53161564, time: 146.36s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.66118825, Test Loss: 3.40544492, time: 147.82s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.39050500, Test Loss: 2.73713617, time: 147.23s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.53665180, Test Loss: 3.14441267, time: 146.00s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.40289799, Test Loss: 3.44936032, time: 147.27s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.46483605, Test Loss: 3.11750872, time: 147.29s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.46886992, Test Loss: 2.96050946, time: 148.12s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.33774618, Test Loss: 2.92093478, time: 147.62s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.65621403, Test Loss: 3.43680226, time: 146.62s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.53680138, Test Loss: 3.29304534, time: 146.60s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.61268410, Test Loss: 3.25222166, time: 147.09s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.59029801, Test Loss: 3.35410558, time: 146.67s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.45179351, Test Loss: 2.98168937, time: 146.61s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.60182238, Test Loss: 3.27795465, time: 146.97s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.30798964, Test Loss: 2.58489155, time: 146.97s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.29823110, Test Loss: 2.76302717, time: 147.51s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.27944464, Test Loss: 2.91820647, time: 146.52s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.35609542, Test Loss: 2.81939890, time: 147.52s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.36071933, Test Loss: 2.90159052, time: 147.24s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.29304627, Test Loss: 2.72216785, time: 147.70s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.52332557, Test Loss: 3.21027431, time: 146.79s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.30403815, Test Loss: 2.94722519, time: 147.14s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.28477937, Test Loss: 2.81577886, time: 147.09s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.37277131, Test Loss: 3.00463113, time: 145.82s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.23328599, Test Loss: 2.63539721, time: 145.34s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.47945026, Test Loss: 3.12765044, time: 145.86s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.24021226, Test Loss: 2.67282359, time: 147.37s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.57100308, Test Loss: 3.30817675, time: 147.04s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.44284458, Test Loss: 3.18146002, time: 146.08s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.23579642, Test Loss: 2.82384615, time: 145.95s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.23428195, Test Loss: 2.64511593, time: 145.29s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.45015722, Test Loss: 3.19611243, time: 145.27s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.40746143, Test Loss: 2.94576100, time: 146.64s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.40373776, Test Loss: 3.06329305, time: 146.87s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.40904259, Test Loss: 3.11179380, time: 146.41s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.20447188, Test Loss: 2.55957772, time: 147.09s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.24631794, Test Loss: 2.69433074, time: 145.94s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.19556418, Test Loss: 2.72408884, time: 146.87s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.45491831, Test Loss: 3.15302811, time: 146.67s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.32023757, Test Loss: 2.75660697, time: 145.91s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.21362997, Test Loss: 2.61457323, time: 146.56s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.15642581, Test Loss: 2.39093854, time: 146.26s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.22591785, Test Loss: 2.70625432, time: 146.55s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.20275051, Test Loss: 2.67057798, time: 147.27s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.35452714, Test Loss: 3.00997693, time: 147.33s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.30071766, Test Loss: 2.98597515, time: 147.56s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.42911688, Test Loss: 2.97139951, time: 147.12s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.24017231, Test Loss: 2.79240711, time: 145.91s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.13292553, Test Loss: 2.63870440, time: 147.09s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.32893189, Test Loss: 2.96866148, time: 147.46s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.34134843, Test Loss: 3.00135745, time: 147.47s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.23909471, Test Loss: 2.82509831, time: 146.31s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.33024031, Test Loss: 2.88062993, time: 145.49s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.20438883, Test Loss: 2.61304416, time: 146.33s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.21921546, Test Loss: 2.70728733, time: 146.79s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.16886784, Test Loss: 2.64516031, time: 146.78s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.06873779, Test Loss: 2.45818815, time: 145.83s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.06183383, Test Loss: 2.45905311, time: 146.78s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.04549479, Test Loss: 2.70433046, time: 146.70s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.24404604, Test Loss: 2.89749175, time: 146.66s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.09721425, Test Loss: 2.69329085, time: 146.54s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.16952468, Test Loss: 2.74864328, time: 146.64s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.33817959, Test Loss: 3.01184347, time: 146.43s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.08605466, Test Loss: 2.54315097, time: 146.76s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.11378048, Test Loss: 2.43577489, time: 145.94s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.24489819, Test Loss: 2.81852404, time: 146.63s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.04328628, Test Loss: 2.27812912, time: 146.47s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.98465667, Test Loss: 2.40473322, time: 147.12s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.05033519, Test Loss: 2.31568145, time: 145.77s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.01757888, Test Loss: 2.35824109, time: 145.67s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.30792593, Test Loss: 3.16879942, time: 145.54s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.21427623, Test Loss: 2.77037745, time: 146.34s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.13556896, Test Loss: 2.70550589, time: 146.34s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.23985787, Test Loss: 2.92923777, time: 145.56s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.19793829, Test Loss: 2.72530053, time: 146.37s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.94843762, Test Loss: 2.28873406, time: 145.77s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.21125278, Test Loss: 2.79827309, time: 146.79s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.05681524, Test Loss: 2.58984460, time: 146.20s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.14600601, Test Loss: 2.68731023, time: 145.30s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.17399913, Test Loss: 2.92809090, time: 146.05s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.92886261, Test Loss: 2.26298548, time: 146.35s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.88472916, Test Loss: 2.14925697, time: 147.43s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.86529755, Test Loss: 2.19405094, time: 146.50s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.94514084, Test Loss: 2.43972386, time: 146.11s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.11845009, Test Loss: 2.64526070, time: 144.48s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.11055252, Test Loss: 2.76595613, time: 144.90s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.80965334, Test Loss: 1.84602748, time: 145.36s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.95016688, Test Loss: 2.49189397, time: 146.89s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.88961597, Test Loss: 2.31505982, time: 145.52s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.82911112, Test Loss: 2.23985384, time: 145.33s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.78211336, Test Loss: 2.16176865, time: 144.66s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.83279908, Test Loss: 2.33048887, time: 144.65s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.10782224, Test Loss: 2.81253141, time: 144.73s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.81978981, Test Loss: 2.35478462, time: 144.69s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.89754002, Test Loss: 2.42235099, time: 144.07s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.96486168, Test Loss: 2.69275792, time: 144.27s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.80188847, Test Loss: 2.27354242, time: 144.35s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.11118938, Test Loss: 2.88198702, time: 143.35s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 2.08530163, Test Loss: 2.86233582, time: 143.32s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.76096207, Test Loss: 2.14760760, time: 144.93s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.83893854, Test Loss: 2.31027630, time: 144.45s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.75491079, Test Loss: 2.21902204, time: 144.40s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.74469512, Test Loss: 2.02454211, time: 143.22s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.67405228, Test Loss: 1.95636253, time: 144.15s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.87975157, Test Loss: 2.51874673, time: 143.97s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.81264815, Test Loss: 2.26671973, time: 144.19s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.66010106, Test Loss: 2.03715501, time: 143.54s
+before loading dataset, path:  ../../../datasets/train_test_period_masked.nc
+dataset loaded
+total stations:  203  remaining stations:  203  removing stations with only NaN values.
+device:  cuda:0
+device:  cuda:0
+start training
+Epoch 1/1, Train Loss: 1.71351292, Test Loss: 2.14773112, time: 143.64s

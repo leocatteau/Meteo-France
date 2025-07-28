@@ -1,0 +1,6 @@
+GNU Compiler Collection loaded
+
+----------------------- Modules available for gcc/9.2.0 ------------------------
+curl/7.66.0     gsl/2.6         jasper/1.900.28 szip/2.1.1      
+grib_api/1.28.0 hdf5/1.8.18     jasper/1.900.29 zlib/1.2.11     
+

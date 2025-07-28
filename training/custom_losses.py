@@ -10,6 +10,17 @@ def masked_MSE(y_true, y_pred, mask):
     mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2)
     return mse
 
+def masked_MSE_altitude(y_true, y_pred, mask, altitude):
+    altitude = torch.tensor(altitude, dtype=torch.float32, device=y_true.device)
+    # renormalize altitude around 1 (and > 0)
+    altitude = altitude / torch.mean(altitude)
+    # copy the vertor to get to the size [15, 24, N, 1] the size of the mask
+    altitude = altitude.unsqueeze(0).unsqueeze(0).unsqueeze(-1).expand(y_true.shape[0], y_true.shape[1], -1, 1)
+
+    altitude = altitude[~mask]
+    mse = torch.mean((y_true[~mask] - y_pred[~mask]) ** 2 * altitude)
+    return mse
+
 def MTSI_mse(y_true, y_imp, y_pred, mask):
     B, S, N, _ = y_true.shape
     y_pred_0 = y_pred[0]
@@ -177,10 +188,13 @@ def mixed_loss(y_true, y_pred, mask, spatial_weight=0.5, eta=0.1, graph=None):
     laplacian_mse = spatial_laplacian_MSE(y_true, y_pred, mask, graph=graph)
     return spatiotemporal_mse + eta * laplacian_mse
 
-def composite_loss(y_true, y_pred, mask_MSE, mask_RG):
+def composite_loss(y_true, y_pred, mask_MSE, mask_RG, altitude):
     masked_mse = masked_MSE(y_true, y_pred, mask_MSE)
+    # masked_mse_alt = masked_MSE_altitude(y_true, y_pred, mask_MSE, altitude)
     # masked_RG_mse, _ = masked_RG_RMSE_MAE(y_pred, y_true, adjacency_matrix, mask_RG)
+    # temporal_gradient_rmse = 24*temporal_gradient_RMSE(y_true, y_pred, mask_RG)
     temporal_gradient_mse = temporal_gradient_MSE(y_true, y_pred, mask_RG)
     # loss = 0.7*masked_mse + 0.2*masked_RG_mse + 0.1*temporal_gradient_mse
+    # loss = 0.9*masked_mse_alt + 0.1*temporal_gradient_rmse
     loss = 0.9*masked_mse + 0.1*temporal_gradient_mse
     return loss

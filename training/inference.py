@@ -298,6 +298,7 @@ class Filler():
         print(original_data.shape)
 
         return (
+            self.predictors,
             original_data.numpy(),
             self.corrupted_data[:usable_length].cpu().numpy(),
             mask.numpy(),

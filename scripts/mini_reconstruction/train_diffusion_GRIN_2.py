@@ -13,12 +13,12 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01_2.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01_processed.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim'
     data_kwargs.dataset = 'WindowHorizonDataset'
     data_kwargs.root_path = '../../../datasets/'
-    data_kwargs.data_path = 'train_test_period_masked.nc'
+    data_kwargs.data_path = 'train_test_period_masked_processed.nc'
     data_kwargs.has_predictors = False
     data_kwargs.scaler = None
     data_kwargs.batch_size = 15
@@ -43,9 +43,8 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     filler_kwargs.altitude = altitude
 
     filler = Trainer(GRINet, model_kwargs, filler_kwargs)
-    # if not first_pass:
-    #     filler.load_model(model_path)
-    filler.load_model(model_path)
+    if not first_pass:
+        filler.load_model(model_path)
     train_loss, test_loss = filler.train(train_dataloader=train_dataloader, test_dataloader=test_dataloader)
     filler.save_model(model_path)
 
@@ -72,10 +71,10 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/mini_reconstruction/data/train_GRIN_24h_attn_impute_mlp_grad01_2bis.json', 'w') as file:
+    with open('../../../results/mini_reconstruction/data/train_GRIN_24h_attn_impute_mlp_grad01_processed.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
-    epochs = 150
+    epochs = 300
     main(epochs=epochs)
 

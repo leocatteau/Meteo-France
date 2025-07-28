@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --output=output.out
-#SBATCH --error=error.err
-#SBATCH --job-name=imputation
+#SBATCH --output=output_processed.out
+#SBATCH --error=error_processed.err
+#SBATCH --job-name=imputation_processed
 #SBATCH --partition=ndl
 #SBATCH --time=01:00:00 #9h pour 200 steps de train, 40min pour reconstruction 
 #SBATCH --mem=0
@@ -20,5 +20,5 @@ module load gcc
 data_path="/scratch/work/catteaul/datasets/"
 
 #srun python experiments_main.py
-# srun python -m train_diffusion_GRIN 
-srun python -m reconstruct_GRIN2
+# srun python -m train_diffusion_GRIN_2
+srun python -m reconstruct_GRIN2_processed

@@ -13,7 +13,7 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_GRIN/model/GRIN_24h_attn_impute_mlp_grad05.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/metric_GRIN/model/GRIN_24h_attn_impute_mlp_graph_partial.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim_clean'
     data_kwargs.dataset = 'WindowHorizonDataset'
@@ -32,12 +32,15 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     test_dataloader = data_provider.test_dataloader()
     adjacency_matrix, graph = data_provider.data.KNN_adjacency(threshold=0.0, verbose=False)
     adjacency_matrix = torch.tensor(adjacency_matrix, dtype=torch.float32)
+    altitude = data_provider.data.predictors['ZS'].values
 
     model_kwargs = dict(adj=adjacency_matrix, d_in=1, global_att=True, d_hidden_spatial=64, d_hidden_temporal=64, d_emb=5,merge='mlp')
     filler_kwargs = SimpleNamespace()
     filler_kwargs.lr = 1e-4
     filler_kwargs.epochs = 1
     filler_kwargs.keep_proba = 1-data_kwargs.mask_proba
+    filler_kwargs.altitude = altitude
+    filler_kwargs.altitude_loss = False
 
     filler = Trainer(GRINet, model_kwargs, filler_kwargs)
     if not first_pass:
@@ -68,7 +71,7 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/metric_GRIN/data/train_GRIN_24h_attn_impute_mlp_grad05.json', 'w') as file:
+    with open('../../../results/metric_GRIN/data/train_GRIN_24h_attn_impute_mlp_graph_partial.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":

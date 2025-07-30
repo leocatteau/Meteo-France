@@ -13,7 +13,7 @@ from io import BytesIO
 from PIL import Image
 import cv2
 
-from training.custom_losses import masked_MSE, MTSI_mse, composite_loss, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, RG_loss, mixed_loss
+from training.custom_losses import masked_MSE, MTSI_mse, composite_loss, altitude_loss, spatiotemporal_masked_MSE, temporal_gradient_MSE, spatial_graph_gradient_MSE, spatial_laplacian_MSE, RG_loss, mixed_loss
 
 
 class Trainer():
@@ -25,7 +25,10 @@ class Trainer():
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = args.lr)
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=args.epochs, eta_min=0.0001)
         # self.train_loss = MTSI_mse
-        self.train_loss = composite_loss
+        if args.altitude_loss:
+            self.train_loss = altitude_loss
+        else:
+            self.train_loss = composite_loss
         # self.train_loss = spatiotemporal_masked_MSE
         self.loss = masked_MSE 
         self.epochs = args.epochs
@@ -33,7 +36,7 @@ class Trainer():
         # self.spatial_weight = args.spatial_weight
         self.exogenous_vars = args.exogenous_vars if hasattr(args, 'exogenous_vars') else False
         # self.adjacency_matrix = model_kwargs['adj'] 
-        self.altitude = args.altitude
+        self.altitude = args.altitude 
 
     def predict(self, batch):
         # include the preprocess 

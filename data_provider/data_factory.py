@@ -93,7 +93,8 @@ class bdclim:
         # predictors = self.predictors.drop(columns='region')
 
         # predictors = self.predictors[['lambx', 'lamby', 'ZS']]
-        predictors = self.predictors[['lambx', 'lamby', 'ZS', 'TCD_500m', 'TPI_30m', 'aspect_30m', 'slope_30m', 'slope_500m', 'aspect_500m', 'TPI_1000m']]
+        predictors = self.predictors[['lambx', 'lamby', 'ZS', 'TCD_500m', 'slope_500m', 'aspect_500m', 'TPI_1000m']]
+        # predictors = self.predictors[['lambx', 'lamby', 'ZS', 'TCD_500m', 'TPI_30m', 'aspect_30m', 'slope_30m', 'slope_500m', 'aspect_500m', 'TPI_1000m']]
         predictors = (predictors - predictors.mean()) / predictors.std()
 
         adjacency_matrix = kneighbors_graph(predictors.fillna(method='ffill'), n_neighbors=10, mode='connectivity', include_self=False).toarray()

@@ -198,3 +198,14 @@ def composite_loss(y_true, y_pred, mask_MSE, mask_RG, altitude):
     # loss = 0.9*masked_mse_alt + 0.1*temporal_gradient_rmse
     loss = 0.9*masked_mse + 0.1*temporal_gradient_mse
     return loss
+
+def altitude_loss(y_true, y_pred, mask_MSE, mask_RG, altitude):
+    # masked_mse = masked_MSE(y_true, y_pred, mask_MSE)
+    masked_mse_alt = masked_MSE_altitude(y_true, y_pred, mask_MSE, altitude)
+    # masked_RG_mse, _ = masked_RG_RMSE_MAE(y_pred, y_true, adjacency_matrix, mask_RG)
+    # temporal_gradient_rmse = 24*temporal_gradient_RMSE(y_true, y_pred, mask_RG)
+    temporal_gradient_mse = temporal_gradient_MSE(y_true, y_pred, mask_RG)
+    # loss = 0.7*masked_mse + 0.2*masked_RG_mse + 0.1*temporal_gradient_mse
+    # loss = 0.9*masked_mse_alt + 0.1*temporal_gradient_rmse
+    loss = 0.9*masked_mse_alt + 0.1*temporal_gradient_mse
+    return loss

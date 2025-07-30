@@ -13,7 +13,7 @@ from training.training import Trainer
 
 from types import SimpleNamespace
 
-def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01_processed_altitude.pt'):
+def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../../results/mini_reconstruction/model/GRIN_24h_attn_impute_mlp_grad01_processed_48.pt'):
     data_kwargs = SimpleNamespace()
     data_kwargs.data = 'bdclim'
     data_kwargs.dataset = 'WindowHorizonDataset'
@@ -24,7 +24,7 @@ def train_diffusion_step(masking_proba=0.5, first_pass=False, model_path='../../
     data_kwargs.batch_size = 15
     data_kwargs.mask_length = 24*7*1
     data_kwargs.mask_proba = masking_proba
-    data_kwargs.window = 24*1*1
+    data_kwargs.window = 48*1*1
     data_kwargs.horizon = 0
 
     data_provider = DataProvider(data_kwargs)
@@ -72,7 +72,7 @@ def main(epochs = 100):
         'train_loss': train_losses,
         'test_loss': test_losses
     }
-    with open('../../../results/mini_reconstruction/data/train_GRIN_24h_attn_impute_mlp_grad01_processed_altitude.json', 'w') as file:
+    with open('../../../results/mini_reconstruction/data/train_GRIN_24h_attn_impute_mlp_grad01_processed_48.json', 'w') as file:
         json.dump(results, file, indent=4)
 
 if __name__ == "__main__":
